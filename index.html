@@ -1652,58 +1652,58 @@
             showFlashcard();
         }
 
-        // Write mode - key answers for fuzzy matching
-        const keyAnswers = {
-            1: ["gammal religion", "livsåskådning", "ingen grundare", "ingen ledare"],
-            2: ["inte omvända", "inte missionera"],
-            3: ["följer hinduismen", "floden indus"],
-            4: ["indien", "nepal"],
-            5: ["3000 år", "3 000 år", "över 3000"],
-            6: ["veda", "vedaskrifterna", "3000", "3500"],
+        // Write mode - simple 1-3 word answers
+        const shortAnswers = {
+            1: ["gammal religion", "religion"],
+            2: ["inte missionera", "inte omvända"],
+            3: ["indus"],
+            4: ["indien nepal", "indien", "nepal"],
+            5: ["3000 år", "3000"],
+            6: ["veda", "vedaskrifterna"],
             7: ["skaparguden", "skapare"],
-            8: ["världssjälen", "gudomliga", "finns i allt"],
-            9: ["brahma", "vishnu", "shiva", "skapare", "bevarare", "förgörare"],
-            10: ["gammalt språk", "heliga texterna"],
-            11: ["läsa högt", "säga högt", "utantill"],
-            12: ["veda", "upanishad", "mahabharata", "bhagavadgita", "ramayana"],
-            13: ["bevara texterna", "innan de skrevs"],
-            14: ["ahimsa", "icke-våld", "satya", "sanning", "asteya", "stjäla"],
-            15: ["kretslopp", "födelse", "död", "återfödelse"],
-            16: ["handlingar", "konsekvenser", "bättre återfödelse"],
-            17: ["återfödelse", "nytt liv"],
+            8: ["världssjälen"],
+            9: ["brahma vishnu shiva"],
+            10: ["sanskrit"],
+            11: ["läsa högt", "utantill"],
+            12: ["veda", "mahabharata", "ramayana"],
+            13: ["muntligt", "bevara"],
+            14: ["ahimsa", "icke-våld"],
+            15: ["kretslopp", "livets kretslopp"],
+            16: ["handlingarnas konsekvenser", "karma"],
+            17: ["återfödelse"],
             18: ["plikt", "livsuppgift"],
-            19: ["illusion", "döljer sanningen"],
-            20: ["befrielse", "samsara", "inte återfödas"],
-            21: ["gud i mänsklig", "krishna", "rama"],
-            22: ["både och", "många gudar", "brahman"],
-            23: ["motsatser", "gott och ont"],
-            24: ["olika sidor", "gudomliga verklighet"],
-            25: ["kroppsvätskor", "orent", "vatten", "eld", "kon", "renande"],
-            26: ["okunnighet", "dåliga val"],
-            27: ["nej", "handlingar", "inte född"],
-            28: ["själen vandrar", "samsara", "moksha"],
-            29: ["grupper", "födseln", "delas in"],
-            30: ["tidiga samhället", "skapa ordning"],
-            31: ["brahminer", "kshatriyer", "vaishyer", "shudrer"],
-            32: ["föds in"],
-            33: ["oberörbarhet", "förbjöds", "1950"],
-            34: ["ja", "socialt", "förbjuden i lag"],
+            19: ["illusion"],
+            20: ["befrielse", "slippa återfödas"],
+            21: ["gud människa", "krishna", "rama"],
+            22: ["både och"],
+            23: ["motsatser"],
+            24: ["samma verklighet", "brahman"],
+            25: ["kroppsvätskor orent", "vatten renar"],
+            26: ["okunnighet"],
+            27: ["nej handlingar", "nej"],
+            28: ["samsara moksha"],
+            29: ["födelsegrupper", "grupper"],
+            30: ["ordning"],
+            31: ["brahminer kshatriyer vaishyer shudrer"],
+            32: ["föds in", "födsel"],
+            33: ["1950", "förbjöds"],
+            34: ["ja socialt"],
             35: ["indien", "sydasien"],
-            36: ["kvoter", "utbildning", "jobb"],
-            37: ["bön", "offer", "gudarna"],
-            38: ["ahimsa", "allt liv heligt", "icke-våld"],
-            39: ["kontrollera", "kropp", "sinne"],
-            40: ["avstå begär", "andlig lärare"],
-            41: ["ritualer", "födelse", "äktenskap", "död"],
-            42: ["diwali", "holi", "navaratri"],
+            36: ["kvoter"],
+            37: ["bön offer", "puja"],
+            38: ["ahimsa"],
+            39: ["kropp sinne"],
+            40: ["askes guru"],
+            41: ["övergångsriter", "ritualer"],
+            42: ["diwali holi navaratri", "diwali", "holi"],
             43: ["gudarnas bostad"],
-            44: ["rena", "moksha", "själen"],
-            45: ["aum", "lotus", "ko", "världssjälen", "renhet", "heligt djur"],
-            46: ["liv", "kretslopp"],
-            47: ["vaishnavism", "shaivism", "shaktism"],
-            48: ["män", "mer makt", "kvinnor"],
-            49: ["tredje kön", "erkänt", "2014"],
-            50: ["heliga asketer", "lever enkelt"]
+            44: ["rena moksha"],
+            45: ["aum lotus ko"],
+            46: ["liv kretslopp"],
+            47: ["vaishnavism shaivism shaktism"],
+            48: ["män makt"],
+            49: ["tredje kön"],
+            50: ["asketer", "sadhus"]
         };
 
         // Levenshtein distance for fuzzy matching
@@ -1730,71 +1730,96 @@
         // Normalize string for comparison
         function normalizeString(str) {
             return str.toLowerCase()
-                .replace(/[.,!?;:'"()–-]/g, ' ')
+                .replace(/[.,!?;:'"()–\-]/g, '')
+                .replace(/å/g, 'a').replace(/ä/g, 'a').replace(/ö/g, 'o')
                 .replace(/\s+/g, ' ')
                 .trim();
+        }
+
+        // Similarity score (0-1) using multiple methods
+        function similarityScore(str1, str2) {
+            if (str1 === str2) return 1;
+            if (str1.includes(str2) || str2.includes(str1)) return 0.9;
+
+            // Levenshtein-based similarity
+            const distance = levenshteinDistance(str1, str2);
+            const maxLen = Math.max(str1.length, str2.length);
+            const levenshteinSim = 1 - (distance / maxLen);
+
+            // Check if words start the same (first 3+ chars)
+            const minLen = Math.min(str1.length, str2.length);
+            let prefixMatch = 0;
+            for (let i = 0; i < minLen; i++) {
+                if (str1[i] === str2[i]) prefixMatch++;
+                else break;
+            }
+            const prefixSim = prefixMatch >= 3 ? 0.7 : 0;
+
+            return Math.max(levenshteinSim, prefixSim);
         }
 
         // Check if answer is correct with fuzzy matching
         function checkWriteAnswer(userAnswer, questionId) {
             const normalized = normalizeString(userAnswer);
-            const keys = keyAnswers[questionId] || [];
-            const correctAnswer = questions.find(q => q.id === questionId).a;
-            const normalizedCorrect = normalizeString(correctAnswer);
+            const acceptedAnswers = shortAnswers[questionId] || [];
 
             // Empty answer
-            if (normalized.length < 2) {
-                return { result: 'wrong', matchedKeys: 0, totalKeys: keys.length };
+            if (normalized.length < 1) {
+                return { result: 'wrong', matched: false };
             }
 
-            // Exact match (with normalization)
-            if (normalized === normalizedCorrect) {
-                return { result: 'correct', matchedKeys: keys.length, totalKeys: keys.length };
-            }
+            // Check against each accepted answer
+            for (const accepted of acceptedAnswers) {
+                const acceptedNorm = normalizeString(accepted);
 
-            // Check how many key concepts are matched
-            let matchedKeys = 0;
-            const userWords = normalized.split(' ');
-
-            for (const key of keys) {
-                const keyNorm = normalizeString(key);
-
-                // Direct inclusion
-                if (normalized.includes(keyNorm)) {
-                    matchedKeys++;
-                    continue;
+                // Exact match
+                if (normalized === acceptedNorm) {
+                    return { result: 'correct', matched: true };
                 }
 
-                // Fuzzy match for each word
-                for (const word of userWords) {
-                    if (word.length >= 3) {
-                        const distance = levenshteinDistance(word, keyNorm);
-                        const maxLen = Math.max(word.length, keyNorm.length);
-                        // Allow ~25% error rate
-                        if (distance <= Math.ceil(maxLen * 0.25)) {
-                            matchedKeys++;
-                            break;
-                        }
+                // User answer contains the accepted answer
+                if (normalized.includes(acceptedNorm)) {
+                    return { result: 'correct', matched: true };
+                }
 
-                        // Check if key is part of word or vice versa
-                        if (word.includes(keyNorm) || keyNorm.includes(word)) {
-                            matchedKeys++;
+                // Accepted answer contains user answer (if user wrote enough)
+                if (normalized.length >= 3 && acceptedNorm.includes(normalized)) {
+                    return { result: 'correct', matched: true };
+                }
+
+                // Word-by-word fuzzy matching
+                const userWords = normalized.split(' ');
+                const acceptedWords = acceptedNorm.split(' ');
+
+                let matchedWords = 0;
+                for (const acceptedWord of acceptedWords) {
+                    for (const userWord of userWords) {
+                        const sim = similarityScore(userWord, acceptedWord);
+                        if (sim >= 0.7) {  // 70% similarity threshold
+                            matchedWords++;
                             break;
                         }
                     }
                 }
+
+                // If most words match, it's correct
+                if (matchedWords >= acceptedWords.length * 0.6) {
+                    return { result: 'correct', matched: true };
+                }
+
+                // Overall string similarity
+                const overallSim = similarityScore(normalized, acceptedNorm);
+                if (overallSim >= 0.65) {
+                    return { result: 'correct', matched: true };
+                }
+
+                // Partial match (some similarity but not enough)
+                if (overallSim >= 0.4 || matchedWords > 0) {
+                    return { result: 'partial', matched: false, similarity: overallSim };
+                }
             }
 
-            // Determine result based on matched keys
-            const matchRatio = keys.length > 0 ? matchedKeys / keys.length : 0;
-
-            if (matchRatio >= 0.6) {
-                return { result: 'correct', matchedKeys, totalKeys: keys.length };
-            } else if (matchRatio >= 0.3) {
-                return { result: 'partial', matchedKeys, totalKeys: keys.length };
-            } else {
-                return { result: 'wrong', matchedKeys, totalKeys: keys.length };
-            }
+            return { result: 'wrong', matched: false };
         }
 
         // Show write question
@@ -1825,11 +1850,16 @@
             document.getElementById('hintToggle').style.display = 'inline-block';
             document.getElementById('writeHint').style.display = 'none';
 
-            // Generate hint (first letters of key words)
-            const keys = keyAnswers[q.id] || [];
-            if (keys.length > 0) {
-                const hints = keys.slice(0, 3).map(k => k.charAt(0).toUpperCase() + '...');
-                document.getElementById('writeHint').textContent = `Nyckelord börjar på: ${hints.join(', ')}`;
+            // Generate hint (first letters + word count)
+            const answers = shortAnswers[q.id] || [];
+            if (answers.length > 0) {
+                const mainAnswer = answers[0];
+                const wordCount = mainAnswer.split(' ').length;
+                const firstLetter = mainAnswer.charAt(0).toUpperCase();
+                const hint = wordCount === 1
+                    ? `Börjar på "${firstLetter}", ${mainAnswer.length} bokstäver`
+                    : `${wordCount} ord, börjar på "${firstLetter}"`;
+                document.getElementById('writeHint').textContent = hint;
             }
 
             const streakIndicator = document.getElementById('writeStreakIndicator');
@@ -1897,16 +1927,18 @@
 
             } else if (result.result === 'partial') {
                 feedback.className = 'write-feedback partial';
-                feedbackText.innerHTML = `⚠️ <strong>Nästan!</strong> Du fick med ${result.matchedKeys} av ${result.totalKeys} nyckelbegrepp.`;
-                reveal.innerHTML = `<strong>Komplett svar:</strong> ${q.a}`;
+                const expectedAnswer = shortAnswers[q.id] ? shortAnswers[q.id][0] : '';
+                feedbackText.innerHTML = `⚠️ <strong>Nästan!</strong> Du var nära.`;
+                reveal.innerHTML = `<strong>Rätt svar:</strong> ${expectedAnswer}`;
 
                 gameState.currentScore += 50; // Partial points
                 gameState.streak = 0;
 
             } else {
                 feedback.className = 'write-feedback wrong';
+                const expectedAnswer = shortAnswers[q.id] ? shortAnswers[q.id][0] : '';
                 feedbackText.innerHTML = '❌ <strong>Fel.</strong> Försök komma ihåg till nästa gång!';
-                reveal.innerHTML = `<strong>Rätt svar:</strong> ${q.a}`;
+                reveal.innerHTML = `<strong>Rätt svar:</strong> ${expectedAnswer}`;
 
                 gameState.streak = 0;
 
