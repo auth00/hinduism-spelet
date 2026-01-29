@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Hinduism-Mästaren</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff6b35;
+            --secondary: #f7c59f;
+            --accent: #2ec4b6;
+            --dark: #1a1a2e;
+            --light: #fef9ef;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --gold: #f1c40f;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%);
+            min-height: 100vh;
+            color: var(--light);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 1rem 0;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, var(--primary), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+        }
+
+        .header .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.3rem;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+
+        /* XP Bar */
+        .xp-container {
+            margin: 1rem 0;
+        }
+
+        .xp-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .xp-bar {
+            height: 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .level-badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--dark);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Menu Screen */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .menu-btn {
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 1.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .menu-btn:hover, .menu-btn:active {
+            transform: scale(1.03);
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(255,107,53,0.3), rgba(255,107,53,0.1));
+        }
+
+        .menu-btn .icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-btn .title {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .menu-btn .desc {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+
+        .menu-btn.locked {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .menu-btn.locked .icon::after {
+            content: " 🔒";
+        }
+
+        /* Game Screen */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .game-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .streak-indicator {
+            background: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .streak-indicator.hot {
+            animation: pulse 0.5s infinite;
+            background: linear-gradient(45deg, var(--primary), var(--danger));
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Question Card */
+        .question-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+            border-radius: 25px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            min-height: 150px;
+        }
+
+        .question-category {
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+
+        .question-number {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-top: 1rem;
+        }
+
+        /* Answer Options */
+        .answers-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .answer-btn {
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 1rem 1.2rem;
+            color: var(--light);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .answer-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--accent);
+        }
+
+        .answer-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .answer-btn.correct {
+            background: rgba(46, 204, 113, 0.3);
+            border-color: var(--success);
+            animation: correctPop 0.4s ease;
+        }
+
+        .answer-btn.wrong {
+            background: rgba(231, 76, 60, 0.3);
+            border-color: var(--danger);
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes correctPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Timer */
+        .timer-container {
+            margin: 1rem 0;
+        }
+
+        .timer-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.1s linear;
+        }
+
+        .timer-fill.warning {
+            background: var(--gold);
+        }
+
+        .timer-fill.danger {
+            background: var(--danger);
+        }
+
+        /* Flashcard */
+        .flashcard-container {
+            perspective: 1000px;
+            margin: 2rem 0;
+        }
+
+        .flashcard {
+            width: 100%;
+            min-height: 250px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            min-height: 250px;
+            backface-visibility: hidden;
+            border-radius: 25px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, var(--primary), #ff8c42);
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, var(--accent), #1db954);
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .flashcard-text {
+            font-size: 1.3rem;
+            line-height: 1.5;
+        }
+
+        .flashcard-hint {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .flashcard-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .flash-btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 15px;
+            border: none;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .flash-btn.knew {
+            background: var(--success);
+            color: white;
+        }
+
+        .flash-btn.didnt-know {
+            background: var(--danger);
+            color: white;
+        }
+
+        .flash-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Results Screen */
+        .results-container {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .results-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .results-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .results-subtitle {
+            opacity: 0.7;
+            margin-bottom: 2rem;
+        }
+
+        .results-stats {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .xp-earned {
+            font-size: 2rem;
+            color: var(--gold);
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .level-up-banner {
+            background: linear-gradient(45deg, var(--gold), var(--primary));
+            padding: 1rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+            animation: glow 1s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 10px var(--gold); }
+            to { box-shadow: 0 0 30px var(--gold); }
+        }
+
+        /* Buttons */
+        .primary-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), #ff8c42);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255,107,53,0.4);
+        }
+
+        .primary-btn:active {
+            transform: scale(0.98);
+        }
+
+        .secondary-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            color: var(--light);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 0.5rem;
+        }
+
+        .secondary-btn:hover {
+            border-color: var(--light);
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Progress Screen */
+        .progress-section {
+            margin: 1.5rem 0;
+        }
+
+        .progress-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-progress {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .category-name {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .category-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            border-radius: 10px;
+        }
+
+        .category-percent {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .achievement {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .achievement.unlocked {
+            background: linear-gradient(135deg, rgba(241,196,15,0.3), rgba(241,196,15,0.1));
+            border: 1px solid var(--gold);
+        }
+
+        .achievement.locked {
+            opacity: 0.4;
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-name {
+            font-size: 0.75rem;
+        }
+
+        /* Combo popup */
+        .combo-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, var(--gold), var(--primary));
+            padding: 1.5rem 2.5rem;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            z-index: 100;
+            animation: popIn 0.5s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .combo-popup.hide {
+            animation: popOut 0.3s ease forwards;
+        }
+
+        @keyframes popOut {
+            from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            to { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
+
+        /* Boss Battle */
+        .boss-container {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .boss-icon {
+            font-size: 4rem;
+            animation: bossFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes bossFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .boss-health-bar {
+            height: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .boss-health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--danger), #c0392b);
+            transition: width 0.3s ease;
+        }
+
+        .boss-name {
+            margin-top: 0.5rem;
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .header h1 { font-size: 1.5rem; }
+            .menu-grid { gap: 0.8rem; }
+            .menu-btn { padding: 1rem 0.8rem; }
+            .menu-btn .icon { font-size: 2rem; }
+            .stats-bar { padding: 0.6rem; }
+            .stat-value { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Hinduism-Mästaren</h1>
+            <p class="subtitle" id="playerTitle">Nybörjare</p>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-value" id="totalXp">0</div>
+                <div class="stat-label">Total XP</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="highScore">0</div>
+                <div class="stat-label">Highscore</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="masteredCount">0/50</div>
+                <div class="stat-label">Behärskade</div>
+            </div>
+        </div>
+
+        <!-- XP Bar -->
+        <div class="xp-container">
+            <div class="xp-info">
+                <span class="level-badge" id="levelBadge">Nivå 1</span>
+                <span id="xpProgress">0 / 100 XP</span>
+            </div>
+            <div class="xp-bar">
+                <div class="xp-fill" id="xpFill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Menu Screen -->
+        <div class="screen active" id="menuScreen">
+            <div class="menu-grid">
+                <div class="menu-btn" onclick="startGame('quiz')">
+                    <div class="icon">🧠</div>
+                    <div class="title">Quiz</div>
+                    <div class="desc">Testa dina kunskaper</div>
+                </div>
+                <div class="menu-btn" onclick="startGame('flashcards')">
+                    <div class="icon">🃏</div>
+                    <div class="title">Flashcards</div>
+                    <div class="desc">Lär dig med kort</div>
+                </div>
+                <div class="menu-btn" onclick="startGame('speed')" id="speedBtn">
+                    <div class="icon">⚡</div>
+                    <div class="title">Snabbrunda</div>
+                    <div class="desc">10 sek per fråga!</div>
+                </div>
+                <div class="menu-btn" onclick="startGame('boss')" id="bossBtn">
+                    <div class="icon">👹</div>
+                    <div class="title">Boss-strid</div>
+                    <div class="desc">Besegra Kunskapens Väktare</div>
+                </div>
+                <div class="menu-btn" onclick="showProgress()">
+                    <div class="icon">📊</div>
+                    <div class="title">Framsteg</div>
+                    <div class="desc">Se din utveckling</div>
+                </div>
+                <div class="menu-btn" onclick="showAchievements()">
+                    <div class="icon">🏆</div>
+                    <div class="title">Medaljer</div>
+                    <div class="desc">Dina utmärkelser</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="screen" id="quizScreen">
+            <div class="game-header">
+                <button class="back-btn" onclick="exitGame()">←</button>
+                <div class="streak-indicator" id="streakIndicator">
+                    🔥 <span id="streakCount">0</span>
+                </div>
+                <div class="game-score">
+                    <span id="gameScore">0</span> poäng
+                </div>
+            </div>
+
+            <div class="timer-container" id="timerContainer" style="display: none;">
+                <div class="timer-bar">
+                    <div class="timer-fill" id="timerFill" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-category" id="questionCategory">Kategori</div>
+                <div class="question-text" id="questionText">Fråga här...</div>
+                <div class="question-number" id="questionNumber">Fråga 1 av 10</div>
+            </div>
+
+            <div class="answers-container" id="answersContainer">
+                <!-- Answers will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Flashcard Screen -->
+        <div class="screen" id="flashcardScreen">
+            <div class="game-header">
+                <button class="back-btn" onclick="exitGame()">←</button>
+                <div class="game-score">
+                    <span id="flashcardProgress">1/50</span>
+                </div>
+            </div>
+
+            <div class="flashcard-container">
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="flashcard-front">
+                        <div class="flashcard-label">Fråga</div>
+                        <div class="flashcard-text" id="flashcardQuestion">Klicka för att vända</div>
+                        <div class="flashcard-hint">Tryck för att se svaret</div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="flashcard-label">Svar</div>
+                        <div class="flashcard-text" id="flashcardAnswer">Svar här</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flashcard-buttons" id="flashcardButtons" style="display: none;">
+                <button class="flash-btn didnt-know" onclick="flashcardResponse(false)">
+                    Visste inte 😕
+                </button>
+                <button class="flash-btn knew" onclick="flashcardResponse(true)">
+                    Visste! 😊
+                </button>
+            </div>
+        </div>
+
+        <!-- Boss Battle Screen -->
+        <div class="screen" id="bossScreen">
+            <div class="game-header">
+                <button class="back-btn" onclick="exitGame()">←</button>
+                <div class="game-score">
+                    <span id="bossScore">0</span> poäng
+                </div>
+            </div>
+
+            <div class="boss-container">
+                <div class="boss-icon" id="bossIcon">👹</div>
+                <div class="boss-health-bar">
+                    <div class="boss-health-fill" id="bossHealth" style="width: 100%"></div>
+                </div>
+                <div class="boss-name" id="bossName">Kunskapens Väktare</div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-category" id="bossCategory">Boss-fråga</div>
+                <div class="question-text" id="bossQuestion">Fråga här...</div>
+            </div>
+
+            <div class="answers-container" id="bossAnswers">
+                <!-- Boss answers will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="screen" id="resultsScreen">
+            <div class="results-container">
+                <div class="results-icon" id="resultsIcon">🎉</div>
+                <div class="results-title" id="resultsTitle">Bra jobbat!</div>
+                <div class="results-subtitle" id="resultsSubtitle">Du klarade dig utmärkt</div>
+
+                <div class="xp-earned" id="xpEarned">+150 XP</div>
+
+                <div class="level-up-banner" id="levelUpBanner" style="display: none;">
+                    🎊 NIVÅ UPP! 🎊
+                    <br><span id="newLevelText">Du är nu nivå 2!</span>
+                </div>
+
+                <div class="results-stats">
+                    <div class="result-row">
+                        <span>Rätt svar</span>
+                        <span id="correctAnswers">8/10</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Bästa streak</span>
+                        <span id="bestStreak">5 🔥</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Rundans poäng</span>
+                        <span id="roundScore">1250</span>
+                    </div>
+                </div>
+
+                <button class="primary-btn" onclick="playAgain()">Spela igen</button>
+                <button class="secondary-btn" onclick="goToMenu()">Tillbaka till menyn</button>
+            </div>
+        </div>
+
+        <!-- Progress Screen -->
+        <div class="screen" id="progressScreen">
+            <div class="game-header">
+                <button class="back-btn" onclick="goToMenu()">←</button>
+                <div>Din Utveckling</div>
+                <div></div>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-title">📚 Kunskapsområden</div>
+                <div id="categoryProgress">
+                    <!-- Categories will be inserted here -->
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-title">📈 Statistik</div>
+                <div class="results-stats">
+                    <div class="result-row">
+                        <span>Totalt spelade</span>
+                        <span id="totalGames">0</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Totala rätta svar</span>
+                        <span id="totalCorrect">0</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Bästa streak någonsin</span>
+                        <span id="bestStreakEver">0 🔥</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Besegrade bossar</span>
+                        <span id="bossesDefeated">0 👹</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements Screen -->
+        <div class="screen" id="achievementsScreen">
+            <div class="game-header">
+                <button class="back-btn" onclick="goToMenu()">←</button>
+                <div>Medaljer</div>
+                <div></div>
+            </div>
+
+            <div class="achievements-grid" id="achievementsGrid">
+                <!-- Achievements will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Question Database
+        const questions = [
+            // Fråga 1-6: Vad är hinduism?
+            { id: 1, q: "Vad är hinduism?", a: "En mycket gammal religion och livsåskådning utan grundare och gemensam ledare.", category: "Vad är hinduism?", categoryId: 1 },
+            { id: 2, q: "Vad betyder att hinduismen inte är missionerande?", a: "Det betyder att man inte försöker omvända andra till religionen.", category: "Vad är hinduism?", categoryId: 1 },
+            { id: 3, q: "Vem är hindu och vad betyder ordet hindu?", a: "En hindu är en person som följer hinduismen. Ordet kommer från området kring floden Indus.", category: "Vad är hinduism?", categoryId: 1 },
+            { id: 4, q: "I vilka två länder är hinduismen störst?", a: "Indien och Nepal.", category: "Vad är hinduism?", categoryId: 1 },
+            { id: 5, q: "Hur gammal är hinduismen?", a: "Den är över 3 000 år gammal.", category: "Vad är hinduism?", categoryId: 1 },
+            { id: 6, q: "Vilka är de äldsta skrifterna och hur gamla är de?", a: "Veda-skrifterna, cirka 3 000–3 500 år gamla.", category: "Vad är hinduism?", categoryId: 1 },
+
+            // Fråga 7-9: Tidig historia och gudsuppfattning
+            { id: 7, q: "Vem är Brahma?", a: "Brahma är skaparguden.", category: "Gudar och tro", categoryId: 2 },
+            { id: 8, q: "Vad är brahman?", a: "Brahman är världssjälen, det gudomliga som finns i allt.", category: "Gudar och tro", categoryId: 2 },
+            { id: 9, q: "Vilka tre gudar är viktigast och hur hänger de ihop?", a: "Brahma (skapare), Vishnu (bevarare) och Shiva (förgörare/förnyare). Alla är uttryck för brahman.", category: "Gudar och tro", categoryId: 2 },
+
+            // Fråga 10-13: Heliga texter
+            { id: 10, q: "Vad är sanskrit?", a: "Ett gammalt språk som de heliga texterna skrevs på.", category: "Heliga texter", categoryId: 3 },
+            { id: 11, q: "Vad betyder att recitera?", a: "Att läsa eller säga något högt, ofta utantill.", category: "Heliga texter", categoryId: 3 },
+            { id: 12, q: "Nämn viktiga heliga texter inom hinduismen.", a: "Veda, Upanishaderna, Mahabharata (Bhagavadgita) och Ramayana.", category: "Heliga texter", categoryId: 3 },
+            { id: 13, q: "Varför var muntligt berättande viktigt?", a: "För att bevara texterna exakt innan de skrevs ner.", category: "Heliga texter", categoryId: 3 },
+
+            // Fråga 14-17: Centrala tankar
+            { id: 14, q: "Vad är de fem levnadsreglerna (yama)?", a: "Ahimsa (icke-våld), satya (sanning), asteya (inte stjäla), brahmacharya (ansvar), aparigraha (inte vara girig).", category: "Centrala tankar", categoryId: 4 },
+            { id: 15, q: "Vad är samsara?", a: "Livets kretslopp - cykeln av födelse, liv, död och återfödelse.", category: "Centrala tankar", categoryId: 4 },
+            { id: 16, q: "Vad är karma?", a: "Handlingarnas konsekvenser - goda handlingar ger bättre återfödelse.", category: "Centrala tankar", categoryId: 4 },
+            { id: 17, q: "Vad är reinkarnation?", a: "Återfödelse till ett nytt liv.", category: "Centrala tankar", categoryId: 4 },
+            { id: 18, q: "Vad är dharma?", a: "Plikt och livsuppgift som varierar beroende på livssituation.", category: "Centrala tankar", categoryId: 4 },
+            { id: 19, q: "Vad är maya?", a: "Illusionen som döljer sanningen om verkligheten.", category: "Centrala tankar", categoryId: 4 },
+            { id: 20, q: "Vad är moksha?", a: "Befrielse från samsara, att inte återfödas.", category: "Centrala tankar", categoryId: 4 },
+
+            // Gud och tro
+            { id: 21, q: "Vad är en avatar?", a: "En gud i mänsklig gestalt, till exempel Krishna eller Rama.", category: "Gudar och tro", categoryId: 2 },
+            { id: 22, q: "Är hinduismen monoteistisk eller polyteistisk?", a: "Både och – många gudar men alla är uttryck för brahman.", category: "Gudar och tro", categoryId: 2 },
+            { id: 23, q: "Vad är dualism?", a: "Tanken att världen består av motsatser, som gott och ont.", category: "Gudar och tro", categoryId: 2 },
+            { id: 24, q: "Hur hänger gudarna ihop med brahman?", a: "De är olika sidor av samma gudomliga verklighet.", category: "Gudar och tro", categoryId: 2 },
+
+            // Människan, ondska, liv och död
+            { id: 25, q: "Vad är rent och orent enligt hinduismen?", a: "Kroppsvätskor och död ses som orent. Vatten, eld och kon ses som renande.", category: "Liv och död", categoryId: 5 },
+            { id: 26, q: "Vad orsakar ondska enligt hinduismen?", a: "Okunnighet och dåliga val.", category: "Liv och död", categoryId: 5 },
+            { id: 27, q: "Föds man ond enligt hinduismen?", a: "Nej, man blir god eller ond genom sina handlingar.", category: "Liv och död", categoryId: 5 },
+            { id: 28, q: "Hur ser hinduismen på liv och död?", a: "Själen vandrar vidare i samsara tills den når moksha.", category: "Liv och död", categoryId: 5 },
+
+            // Kastsystemet
+            { id: 29, q: "Vad är kastsystemet?", a: "Ett system där människor delas in i grupper från födseln.", category: "Kastsystemet", categoryId: 6 },
+            { id: 30, q: "Hur uppstod kastsystemet?", a: "I det tidiga hinduiska samhället för att skapa ordning.", category: "Kastsystemet", categoryId: 6 },
+            { id: 31, q: "Vilka är de fyra varna?", a: "Brahminer, kshatriyer, vaishyer och shudrer.", category: "Kastsystemet", categoryId: 6 },
+            { id: 32, q: "Hur hamnar man i en kast?", a: "Man föds in i den.", category: "Kastsystemet", categoryId: 6 },
+            { id: 33, q: "Vad hände 1950 gällande kastsystemet?", a: "Oberörbarhet förbjöds i lag i Indien.", category: "Kastsystemet", categoryId: 6 },
+            { id: 34, q: "Finns kastsystemet kvar idag?", a: "Ja, socialt, men diskriminering är förbjuden i lag.", category: "Kastsystemet", categoryId: 6 },
+            { id: 35, q: "Var finns kastsystemet främst?", a: "I Indien och Sydasien.", category: "Kastsystemet", categoryId: 6 },
+            { id: 36, q: "Vad gör den indiska staten mot kastsystemet och har det hjälpt?", a: "Kvoter i utbildning och jobb – har hjälpt vissa men inte tagit bort alla problem.", category: "Kastsystemet", categoryId: 6 },
+
+            // Uttryck och handlingar
+            { id: 37, q: "Vad är puja?", a: "Daglig bön och offer till gudarna.", category: "Uttryck och handlingar", categoryId: 7 },
+            { id: 38, q: "Varför är många hinduer vegetarianer?", a: "På grund av ahimsa – allt liv är heligt.", category: "Uttryck och handlingar", categoryId: 7 },
+            { id: 39, q: "Vad är yoga?", a: "Metoder för att kontrollera kropp och sinne.", category: "Uttryck och handlingar", categoryId: 7 },
+            { id: 40, q: "Vad är askes och vad är en guru?", a: "Askes = avstå från begär. Guru = andlig lärare.", category: "Uttryck och handlingar", categoryId: 7 },
+
+            // Riter och platser
+            { id: 41, q: "Vad är övergångsriter?", a: "Ritualer vid till exempel födelse, äktenskap och död.", category: "Riter och platser", categoryId: 8 },
+            { id: 42, q: "Ge exempel på hinduiska högtider.", a: "Diwali, Holi, Navaratri.", category: "Riter och platser", categoryId: 8 },
+            { id: 43, q: "Vad är ett hinduiskt tempel?", a: "Gudarnas bostad.", category: "Riter och platser", categoryId: 8 },
+            { id: 44, q: "Varför är Varanasi och Ganges viktiga?", a: "De anses rena och hjälpa själen mot moksha.", category: "Riter och platser", categoryId: 8 },
+
+            // Symboler och riktningar
+            { id: 45, q: "Nämn tre symboler och deras betydelse inom hinduismen.", a: "Aum (världssjälen), lotus (renhet), ko (heligt djur).", category: "Symboler", categoryId: 9 },
+            { id: 46, q: "Vad betyder swastika inom hinduismen?", a: "Liv och kretslopp (en gammal religiös symbol).", category: "Symboler", categoryId: 9 },
+            { id: 47, q: "Nämn tre riktningar inom hinduismen.", a: "Vaishnavism, shaivism och shaktism.", category: "Riktningar", categoryId: 10 },
+
+            // Samhälle
+            { id: 48, q: "Vad är patriarkat?", a: "Ett samhälle där män har mer makt än kvinnor.", category: "Samhälle", categoryId: 11 },
+            { id: 49, q: "Vad är hijras?", a: "Ett tredje kön som är erkänt i Indien sedan 2014.", category: "Samhälle", categoryId: 11 },
+            { id: 50, q: "Vad är sadhus?", a: "Heliga asketer som lever enkelt.", category: "Samhälle", categoryId: 11 }
+        ];
+
+        const categories = [
+            { id: 1, name: "Vad är hinduism?" },
+            { id: 2, name: "Gudar och tro" },
+            { id: 3, name: "Heliga texter" },
+            { id: 4, name: "Centrala tankar" },
+            { id: 5, name: "Liv och död" },
+            { id: 6, name: "Kastsystemet" },
+            { id: 7, name: "Uttryck och handlingar" },
+            { id: 8, name: "Riter och platser" },
+            { id: 9, name: "Symboler" },
+            { id: 10, name: "Riktningar" },
+            { id: 11, name: "Samhälle" }
+        ];
+
+        const achievements = [
+            { id: "first_quiz", name: "Första steget", icon: "🎯", desc: "Klara din första quiz" },
+            { id: "streak_5", name: "På rulle!", icon: "🔥", desc: "5 rätt i rad" },
+            { id: "streak_10", name: "Ostoppbar", icon: "💥", desc: "10 rätt i rad" },
+            { id: "level_5", name: "Lärling", icon: "📚", desc: "Nå nivå 5" },
+            { id: "level_10", name: "Kunskapsrik", icon: "🎓", desc: "Nå nivå 10" },
+            { id: "boss_1", name: "Boss-besegrare", icon: "👹", desc: "Besegra din första boss" },
+            { id: "mastered_10", name: "Expert", icon: "⭐", desc: "Behärska 10 frågor" },
+            { id: "mastered_25", name: "Mästare", icon: "🌟", desc: "Behärska 25 frågor" },
+            { id: "mastered_50", name: "Guru", icon: "✨", desc: "Behärska alla 50 frågor" },
+            { id: "speed_demon", name: "Snabbfotad", icon: "⚡", desc: "Klara snabbrunda utan fel" },
+            { id: "perfect_10", name: "Perfekt runda", icon: "💯", desc: "10/10 rätt i quiz" },
+            { id: "dedicated", name: "Hängiven", icon: "🙏", desc: "Spela 20 rundor" }
+        ];
+
+        const titles = [
+            { level: 1, title: "Nybörjare" },
+            { level: 3, title: "Sökande" },
+            { level: 5, title: "Lärling" },
+            { level: 8, title: "Student" },
+            { level: 10, title: "Kunnig" },
+            { level: 13, title: "Vis" },
+            { level: 15, title: "Lärd" },
+            { level: 18, title: "Expert" },
+            { level: 20, title: "Mästare" },
+            { level: 25, title: "Guru" },
+            { level: 30, title: "Upplyst" }
+        ];
+
+        // Game State
+        let gameState = {
+            totalXp: 0,
+            level: 1,
+            highScore: 0,
+            currentScore: 0,
+            streak: 0,
+            bestStreak: 0,
+            bestStreakEver: 0,
+            correctAnswers: 0,
+            totalQuestions: 0,
+            currentQuestionIndex: 0,
+            gameQuestions: [],
+            gameMode: null,
+            timerInterval: null,
+            timeLeft: 10,
+            masteredQuestions: {},
+            categoryProgress: {},
+            achievements: [],
+            totalGames: 0,
+            totalCorrect: 0,
+            bossesDefeated: 0,
+            bossHealth: 100,
+            flashcardIndex: 0,
+            flashcardShuffled: []
+        };
+
+        // Load saved state
+        function loadState() {
+            const saved = localStorage.getItem('hinduismGame');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                gameState = { ...gameState, ...parsed };
+            }
+            updateUI();
+        }
+
+        // Save state
+        function saveState() {
+            const toSave = {
+                totalXp: gameState.totalXp,
+                level: gameState.level,
+                highScore: gameState.highScore,
+                bestStreakEver: gameState.bestStreakEver,
+                masteredQuestions: gameState.masteredQuestions,
+                categoryProgress: gameState.categoryProgress,
+                achievements: gameState.achievements,
+                totalGames: gameState.totalGames,
+                totalCorrect: gameState.totalCorrect,
+                bossesDefeated: gameState.bossesDefeated
+            };
+            localStorage.setItem('hinduismGame', JSON.stringify(toSave));
+        }
+
+        // Update UI
+        function updateUI() {
+            document.getElementById('totalXp').textContent = gameState.totalXp;
+            document.getElementById('highScore').textContent = gameState.highScore;
+
+            const mastered = Object.values(gameState.masteredQuestions).filter(v => v >= 3).length;
+            document.getElementById('masteredCount').textContent = `${mastered}/50`;
+
+            document.getElementById('levelBadge').textContent = `Nivå ${gameState.level}`;
+
+            const xpForLevel = gameState.level * 100;
+            const xpInLevel = gameState.totalXp - ((gameState.level - 1) * gameState.level / 2 * 100);
+            const progress = Math.min((xpInLevel / xpForLevel) * 100, 100);
+            document.getElementById('xpFill').style.width = `${progress}%`;
+            document.getElementById('xpProgress').textContent = `${Math.floor(xpInLevel)} / ${xpForLevel} XP`;
+
+            const title = titles.filter(t => t.level <= gameState.level).pop();
+            document.getElementById('playerTitle').textContent = title ? title.title : 'Nybörjare';
+
+            // Unlock game modes based on level
+            const speedBtn = document.getElementById('speedBtn');
+            const bossBtn = document.getElementById('bossBtn');
+
+            if (gameState.level < 3) {
+                speedBtn.classList.add('locked');
+            } else {
+                speedBtn.classList.remove('locked');
+            }
+
+            if (gameState.level < 5) {
+                bossBtn.classList.add('locked');
+            } else {
+                bossBtn.classList.remove('locked');
+            }
+        }
+
+        // Show screen
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Start game
+        function startGame(mode) {
+            if (mode === 'speed' && gameState.level < 3) {
+                showCombo('Lås upp på nivå 3!');
+                return;
+            }
+            if (mode === 'boss' && gameState.level < 5) {
+                showCombo('Lås upp på nivå 5!');
+                return;
+            }
+
+            gameState.gameMode = mode;
+            gameState.currentScore = 0;
+            gameState.streak = 0;
+            gameState.bestStreak = 0;
+            gameState.correctAnswers = 0;
+            gameState.currentQuestionIndex = 0;
+
+            if (mode === 'quiz' || mode === 'speed') {
+                gameState.totalQuestions = 10;
+                gameState.gameQuestions = shuffleArray([...questions]).slice(0, 10);
+                showScreen('quizScreen');
+
+                if (mode === 'speed') {
+                    document.getElementById('timerContainer').style.display = 'block';
+                } else {
+                    document.getElementById('timerContainer').style.display = 'none';
+                }
+
+                showQuestion();
+            } else if (mode === 'flashcards') {
+                gameState.flashcardShuffled = shuffleArray([...questions]);
+                gameState.flashcardIndex = 0;
+                showScreen('flashcardScreen');
+                showFlashcard();
+            } else if (mode === 'boss') {
+                gameState.bossHealth = 100;
+                gameState.totalQuestions = 15;
+                gameState.gameQuestions = shuffleArray([...questions]).slice(0, 15);
+                showScreen('bossScreen');
+                document.getElementById('bossHealth').style.width = '100%';
+                showBossQuestion();
+            }
+        }
+
+        // Shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Generate wrong answers
+        function generateWrongAnswers(correctQuestion) {
+            const otherQuestions = questions.filter(q => q.id !== correctQuestion.id);
+            const shuffled = shuffleArray([...otherQuestions]);
+            return shuffled.slice(0, 3).map(q => q.a);
+        }
+
+        // Show question
+        function showQuestion() {
+            if (gameState.currentQuestionIndex >= gameState.totalQuestions) {
+                endGame();
+                return;
+            }
+
+            const q = gameState.gameQuestions[gameState.currentQuestionIndex];
+            document.getElementById('questionCategory').textContent = q.category;
+            document.getElementById('questionText').textContent = q.q;
+            document.getElementById('questionNumber').textContent =
+                `Fråga ${gameState.currentQuestionIndex + 1} av ${gameState.totalQuestions}`;
+            document.getElementById('gameScore').textContent = gameState.currentScore;
+            document.getElementById('streakCount').textContent = gameState.streak;
+
+            const streakIndicator = document.getElementById('streakIndicator');
+            if (gameState.streak >= 5) {
+                streakIndicator.classList.add('hot');
+            } else {
+                streakIndicator.classList.remove('hot');
+            }
+
+            // Generate answers
+            const wrongAnswers = generateWrongAnswers(q);
+            const allAnswers = shuffleArray([q.a, ...wrongAnswers]);
+
+            const container = document.getElementById('answersContainer');
+            container.innerHTML = '';
+
+            allAnswers.forEach((answer, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer;
+                btn.onclick = () => selectAnswer(btn, answer === q.a, q);
+                container.appendChild(btn);
+            });
+
+            if (gameState.gameMode === 'speed') {
+                startTimer();
+            }
+        }
+
+        // Start timer
+        function startTimer() {
+            gameState.timeLeft = 10;
+            const timerFill = document.getElementById('timerFill');
+            timerFill.style.width = '100%';
+            timerFill.className = 'timer-fill';
+
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft -= 0.1;
+                const percent = (gameState.timeLeft / 10) * 100;
+                timerFill.style.width = `${percent}%`;
+
+                if (gameState.timeLeft <= 3) {
+                    timerFill.className = 'timer-fill danger';
+                } else if (gameState.timeLeft <= 5) {
+                    timerFill.className = 'timer-fill warning';
+                }
+
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    timeUp();
+                }
+            }, 100);
+        }
+
+        // Time up
+        function timeUp() {
+            const q = gameState.gameQuestions[gameState.currentQuestionIndex];
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === q.a) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            gameState.streak = 0;
+            document.getElementById('streakCount').textContent = '0';
+
+            setTimeout(() => {
+                gameState.currentQuestionIndex++;
+                showQuestion();
+            }, 1500);
+        }
+
+        // Select answer
+        function selectAnswer(btn, isCorrect, question) {
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                gameState.correctAnswers++;
+                gameState.streak++;
+                gameState.totalCorrect++;
+
+                // Calculate points
+                let points = 100;
+                if (gameState.streak >= 3) points += 50;
+                if (gameState.streak >= 5) points += 50;
+                if (gameState.streak >= 10) points += 100;
+                if (gameState.gameMode === 'speed') {
+                    points += Math.floor(gameState.timeLeft * 10);
+                }
+
+                gameState.currentScore += points;
+
+                // Update mastery
+                if (!gameState.masteredQuestions[question.id]) {
+                    gameState.masteredQuestions[question.id] = 0;
+                }
+                gameState.masteredQuestions[question.id]++;
+
+                if (gameState.streak > gameState.bestStreak) {
+                    gameState.bestStreak = gameState.streak;
+                }
+                if (gameState.streak > gameState.bestStreakEver) {
+                    gameState.bestStreakEver = gameState.streak;
+                }
+
+                // Show streak combo
+                if (gameState.streak === 3) showCombo('3x Combo! 🔥');
+                if (gameState.streak === 5) showCombo('5x SUPER! 💥');
+                if (gameState.streak === 10) showCombo('10x MEGA! 🌟');
+
+            } else {
+                btn.classList.add('wrong');
+                gameState.streak = 0;
+
+                // Show correct answer
+                buttons.forEach(b => {
+                    if (b.textContent === question.a) {
+                        b.classList.add('correct');
+                    }
+                });
+
+                // Reset mastery progress
+                if (gameState.masteredQuestions[question.id]) {
+                    gameState.masteredQuestions[question.id] = Math.max(0, gameState.masteredQuestions[question.id] - 1);
+                }
+            }
+
+            document.getElementById('gameScore').textContent = gameState.currentScore;
+            document.getElementById('streakCount').textContent = gameState.streak;
+
+            setTimeout(() => {
+                gameState.currentQuestionIndex++;
+                showQuestion();
+            }, 1500);
+        }
+
+        // Show combo popup
+        function showCombo(text) {
+            const popup = document.createElement('div');
+            popup.className = 'combo-popup';
+            popup.textContent = text;
+            document.body.appendChild(popup);
+
+            setTimeout(() => {
+                popup.classList.add('hide');
+                setTimeout(() => popup.remove(), 300);
+            }, 1000);
+        }
+
+        // Boss battle
+        function showBossQuestion() {
+            if (gameState.currentQuestionIndex >= gameState.totalQuestions || gameState.bossHealth <= 0) {
+                endBossBattle();
+                return;
+            }
+
+            const q = gameState.gameQuestions[gameState.currentQuestionIndex];
+            document.getElementById('bossCategory').textContent = q.category;
+            document.getElementById('bossQuestion').textContent = q.q;
+            document.getElementById('bossScore').textContent = gameState.currentScore;
+
+            const wrongAnswers = generateWrongAnswers(q);
+            const allAnswers = shuffleArray([q.a, ...wrongAnswers]);
+
+            const container = document.getElementById('bossAnswers');
+            container.innerHTML = '';
+
+            allAnswers.forEach((answer) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer;
+                btn.onclick = () => selectBossAnswer(btn, answer === q.a, q);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectBossAnswer(btn, isCorrect, question) {
+            const buttons = document.querySelectorAll('#bossAnswers .answer-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                gameState.correctAnswers++;
+                gameState.currentScore += 150;
+                gameState.bossHealth -= 20;
+                gameState.totalCorrect++;
+
+                if (!gameState.masteredQuestions[question.id]) {
+                    gameState.masteredQuestions[question.id] = 0;
+                }
+                gameState.masteredQuestions[question.id]++;
+
+                document.getElementById('bossHealth').style.width = `${gameState.bossHealth}%`;
+                document.getElementById('bossIcon').textContent = gameState.bossHealth <= 30 ? '😵' : '😤';
+
+                showCombo('Träff! -20 HP');
+            } else {
+                btn.classList.add('wrong');
+                buttons.forEach(b => {
+                    if (b.textContent === question.a) b.classList.add('correct');
+                });
+                showCombo('Miss! 😈');
+            }
+
+            setTimeout(() => {
+                gameState.currentQuestionIndex++;
+                showBossQuestion();
+            }, 1500);
+        }
+
+        function endBossBattle() {
+            const won = gameState.bossHealth <= 0;
+
+            if (won) {
+                gameState.bossesDefeated++;
+                gameState.currentScore += 500;
+                unlockAchievement('boss_1');
+            }
+
+            endGame(won ? 'boss_win' : 'boss_lose');
+        }
+
+        // Flashcards
+        function showFlashcard() {
+            if (gameState.flashcardIndex >= gameState.flashcardShuffled.length) {
+                gameState.flashcardIndex = 0;
+                gameState.flashcardShuffled = shuffleArray([...questions]);
+            }
+
+            const q = gameState.flashcardShuffled[gameState.flashcardIndex];
+            document.getElementById('flashcardQuestion').textContent = q.q;
+            document.getElementById('flashcardAnswer').textContent = q.a;
+            document.getElementById('flashcardProgress').textContent =
+                `${gameState.flashcardIndex + 1}/${gameState.flashcardShuffled.length}`;
+
+            const card = document.getElementById('flashcard');
+            card.classList.remove('flipped');
+            document.getElementById('flashcardButtons').style.display = 'none';
+        }
+
+        function flipCard() {
+            const card = document.getElementById('flashcard');
+            card.classList.toggle('flipped');
+
+            if (card.classList.contains('flipped')) {
+                document.getElementById('flashcardButtons').style.display = 'flex';
+            }
+        }
+
+        function flashcardResponse(knew) {
+            const q = gameState.flashcardShuffled[gameState.flashcardIndex];
+
+            if (knew) {
+                gameState.currentScore += 25;
+                gameState.totalCorrect++;
+
+                if (!gameState.masteredQuestions[q.id]) {
+                    gameState.masteredQuestions[q.id] = 0;
+                }
+                gameState.masteredQuestions[q.id]++;
+            } else {
+                if (gameState.masteredQuestions[q.id]) {
+                    gameState.masteredQuestions[q.id] = Math.max(0, gameState.masteredQuestions[q.id] - 1);
+                }
+            }
+
+            gameState.flashcardIndex++;
+            showFlashcard();
+        }
+
+        // End game
+        function endGame(special = null) {
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+
+            gameState.totalGames++;
+
+            // Calculate XP
+            let xpEarned = gameState.correctAnswers * 10;
+            xpEarned += gameState.bestStreak * 5;
+            if (gameState.correctAnswers === gameState.totalQuestions) {
+                xpEarned += 50;
+                unlockAchievement('perfect_10');
+            }
+            if (special === 'boss_win') {
+                xpEarned += 100;
+            }
+            if (gameState.gameMode === 'speed' && gameState.correctAnswers === 10) {
+                unlockAchievement('speed_demon');
+            }
+
+            gameState.totalXp += xpEarned;
+
+            // Check level up
+            const oldLevel = gameState.level;
+            while (gameState.totalXp >= (gameState.level * (gameState.level + 1) / 2 * 100)) {
+                gameState.level++;
+            }
+            const leveledUp = gameState.level > oldLevel;
+
+            // Update high score
+            if (gameState.currentScore > gameState.highScore) {
+                gameState.highScore = gameState.currentScore;
+            }
+
+            // Check achievements
+            unlockAchievement('first_quiz');
+            if (gameState.bestStreak >= 5) unlockAchievement('streak_5');
+            if (gameState.bestStreak >= 10) unlockAchievement('streak_10');
+            if (gameState.level >= 5) unlockAchievement('level_5');
+            if (gameState.level >= 10) unlockAchievement('level_10');
+            if (gameState.totalGames >= 20) unlockAchievement('dedicated');
+
+            const mastered = Object.values(gameState.masteredQuestions).filter(v => v >= 3).length;
+            if (mastered >= 10) unlockAchievement('mastered_10');
+            if (mastered >= 25) unlockAchievement('mastered_25');
+            if (mastered >= 50) unlockAchievement('mastered_50');
+
+            // Show results
+            showScreen('resultsScreen');
+
+            if (special === 'boss_win') {
+                document.getElementById('resultsIcon').textContent = '🏆';
+                document.getElementById('resultsTitle').textContent = 'Boss besegrad!';
+                document.getElementById('resultsSubtitle').textContent = 'Du besegrade Kunskapens Väktare!';
+            } else if (special === 'boss_lose') {
+                document.getElementById('resultsIcon').textContent = '😔';
+                document.getElementById('resultsTitle').textContent = 'Nästan...';
+                document.getElementById('resultsSubtitle').textContent = 'Bossen överlevde, försök igen!';
+            } else if (gameState.correctAnswers === gameState.totalQuestions) {
+                document.getElementById('resultsIcon').textContent = '🌟';
+                document.getElementById('resultsTitle').textContent = 'Perfekt!';
+                document.getElementById('resultsSubtitle').textContent = 'Alla rätt! Fantastiskt!';
+            } else if (gameState.correctAnswers >= 7) {
+                document.getElementById('resultsIcon').textContent = '🎉';
+                document.getElementById('resultsTitle').textContent = 'Bra jobbat!';
+                document.getElementById('resultsSubtitle').textContent = 'Du är på god väg!';
+            } else {
+                document.getElementById('resultsIcon').textContent = '💪';
+                document.getElementById('resultsTitle').textContent = 'Fortsätt öva!';
+                document.getElementById('resultsSubtitle').textContent = 'Övning ger färdighet!';
+            }
+
+            document.getElementById('xpEarned').textContent = `+${xpEarned} XP`;
+            document.getElementById('correctAnswers').textContent =
+                `${gameState.correctAnswers}/${gameState.totalQuestions}`;
+            document.getElementById('bestStreak').textContent = `${gameState.bestStreak} 🔥`;
+            document.getElementById('roundScore').textContent = gameState.currentScore;
+
+            const levelBanner = document.getElementById('levelUpBanner');
+            if (leveledUp) {
+                levelBanner.style.display = 'block';
+                document.getElementById('newLevelText').textContent = `Du är nu nivå ${gameState.level}!`;
+            } else {
+                levelBanner.style.display = 'none';
+            }
+
+            saveState();
+            updateUI();
+        }
+
+        // Unlock achievement
+        function unlockAchievement(id) {
+            if (!gameState.achievements.includes(id)) {
+                gameState.achievements.push(id);
+                const ach = achievements.find(a => a.id === id);
+                if (ach) {
+                    showCombo(`${ach.icon} ${ach.name}!`);
+                }
+            }
+        }
+
+        // Navigation
+        function exitGame() {
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+
+            if (gameState.gameMode === 'flashcards') {
+                saveState();
+                updateUI();
+            }
+
+            goToMenu();
+        }
+
+        function playAgain() {
+            startGame(gameState.gameMode);
+        }
+
+        function goToMenu() {
+            showScreen('menuScreen');
+        }
+
+        // Progress screen
+        function showProgress() {
+            showScreen('progressScreen');
+
+            const container = document.getElementById('categoryProgress');
+            container.innerHTML = '';
+
+            categories.forEach(cat => {
+                const catQuestions = questions.filter(q => q.categoryId === cat.id);
+                const mastered = catQuestions.filter(q =>
+                    gameState.masteredQuestions[q.id] && gameState.masteredQuestions[q.id] >= 3
+                ).length;
+                const percent = Math.round((mastered / catQuestions.length) * 100);
+
+                const div = document.createElement('div');
+                div.className = 'category-progress';
+                div.innerHTML = `
+                    <div class="category-name">${cat.name}</div>
+                    <div class="category-bar">
+                        <div class="category-fill" style="width: ${percent}%"></div>
+                    </div>
+                    <div class="category-percent">${mastered}/${catQuestions.length} behärskade (${percent}%)</div>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('totalGames').textContent = gameState.totalGames;
+            document.getElementById('totalCorrect').textContent = gameState.totalCorrect;
+            document.getElementById('bestStreakEver').textContent = `${gameState.bestStreakEver} 🔥`;
+            document.getElementById('bossesDefeated').textContent = `${gameState.bossesDefeated} 👹`;
+        }
+
+        // Achievements screen
+        function showAchievements() {
+            showScreen('achievementsScreen');
+
+            const grid = document.getElementById('achievementsGrid');
+            grid.innerHTML = '';
+
+            achievements.forEach(ach => {
+                const unlocked = gameState.achievements.includes(ach.id);
+                const div = document.createElement('div');
+                div.className = `achievement ${unlocked ? 'unlocked' : 'locked'}`;
+                div.innerHTML = `
+                    <div class="achievement-icon">${unlocked ? ach.icon : '🔒'}</div>
+                    <div class="achievement-name">${ach.name}</div>
+                `;
+                div.title = ach.desc;
+                grid.appendChild(div);
+            });
+        }
+
+        // Initialize
+        loadState();
+    </script>
+</body>
+</html>
