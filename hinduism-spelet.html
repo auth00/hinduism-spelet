@@ -297,6 +297,19 @@
             animation: shake 0.4s ease;
         }
 
+        .answer-btn.next-btn {
+            background: linear-gradient(135deg, var(--accent), #9b59b6);
+            border-color: var(--accent);
+            text-align: center;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        .answer-btn.next-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+        }
+
         @keyframes correctPop {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -1080,79 +1093,379 @@
     </div>
 
     <script>
-        // Question Database
+        // Question Database with curated wrong answers
         const questions = [
             // Fråga 1-6: Vad är hinduism?
-            { id: 1, q: "Vad är hinduism?", a: "En mycket gammal religion och livsåskådning utan grundare och gemensam ledare.", category: "Vad är hinduism?", categoryId: 1 },
-            { id: 2, q: "Vad betyder att hinduismen inte är missionerande?", a: "Det betyder att man inte försöker omvända andra till religionen.", category: "Vad är hinduism?", categoryId: 1 },
-            { id: 3, q: "Vem är hindu och vad betyder ordet hindu?", a: "En hindu är en person som följer hinduismen. Ordet kommer från området kring floden Indus.", category: "Vad är hinduism?", categoryId: 1 },
-            { id: 4, q: "I vilka två länder är hinduismen störst?", a: "Indien och Nepal.", category: "Vad är hinduism?", categoryId: 1 },
-            { id: 5, q: "Hur gammal är hinduismen?", a: "Den är över 3 000 år gammal.", category: "Vad är hinduism?", categoryId: 1 },
-            { id: 6, q: "Vilka är de äldsta skrifterna och hur gamla är de?", a: "Veda-skrifterna, cirka 3 000–3 500 år gamla.", category: "Vad är hinduism?", categoryId: 1 },
+            {
+                id: 1,
+                q: "Vad är hinduism?",
+                a: ["En mycket gammal religion utan grundare och gemensam ledare.", "En av världens äldsta religioner, utan specifik grundare."],
+                wrong: ["En religion grundad av Buddha för cirka 2500 år sedan.", "En monoteistisk religion med en helig bok och en profet.", "En filosofi som uppstod i Kina under Konfucius tid."],
+                category: "Vad är hinduism?", categoryId: 1
+            },
+            {
+                id: 2,
+                q: "Vad betyder att hinduismen inte är missionerande?",
+                a: ["Att man inte försöker omvända andra till religionen.", "Att hinduismen inte aktivt sprider sin tro till andra."],
+                wrong: ["Att man måste resa till Indien för att bli hindu.", "Att religionen är hemlig och inte får diskuteras.", "Att endast präster får utöva religionen."],
+                category: "Vad är hinduism?", categoryId: 1
+            },
+            {
+                id: 3,
+                q: "Varifrån kommer ordet 'hindu'?",
+                a: ["Från floden Indus.", "Från området kring floden Indus."],
+                wrong: ["Från guden Vishnu.", "Från den heliga staden Varanasi.", "Från det heliga ljudet Aum."],
+                category: "Vad är hinduism?", categoryId: 1
+            },
+            {
+                id: 4,
+                q: "I vilka två länder är hinduismen störst?",
+                a: ["Indien och Nepal.", "Nepal och Indien."],
+                wrong: ["Indien och Pakistan.", "Indien och Sri Lanka.", "Nepal och Bangladesh."],
+                category: "Vad är hinduism?", categoryId: 1
+            },
+            {
+                id: 5,
+                q: "Hur gammal är hinduismen?",
+                a: ["Över 3 000 år gammal.", "Cirka 3 000-4 000 år gammal."],
+                wrong: ["Cirka 1 500 år gammal.", "Över 10 000 år gammal.", "Cirka 500 år gammal."],
+                category: "Vad är hinduism?", categoryId: 1
+            },
+            {
+                id: 6,
+                q: "Vilka är hinduismens äldsta skrifter?",
+                a: ["Veda-skrifterna, cirka 3 000–3 500 år gamla.", "Veda, som är 3 000-3 500 år gamla."],
+                wrong: ["Upanishaderna, cirka 1 000 år gamla.", "Bhagavadgita, cirka 2 000 år gammal.", "Ramayana, cirka 4 000 år gammal."],
+                category: "Vad är hinduism?", categoryId: 1
+            },
 
             // Fråga 7-9: Tidig historia och gudsuppfattning
-            { id: 7, q: "Vem är Brahma?", a: "Brahma är skaparguden.", category: "Gudar och tro", categoryId: 2 },
-            { id: 8, q: "Vad är brahman?", a: "Brahman är världssjälen, det gudomliga som finns i allt.", category: "Gudar och tro", categoryId: 2 },
-            { id: 9, q: "Vilka tre gudar är viktigast och hur hänger de ihop?", a: "Brahma (skapare), Vishnu (bevarare) och Shiva (förgörare/förnyare). Alla är uttryck för brahman.", category: "Gudar och tro", categoryId: 2 },
+            {
+                id: 7,
+                q: "Vem är Brahma?",
+                a: ["Skaparguden.", "Guden som skapade världen."],
+                wrong: ["Bevararguden.", "Förstörarguden.", "Världssjälen."],
+                category: "Gudar och tro", categoryId: 2
+            },
+            {
+                id: 8,
+                q: "Vad är brahman?",
+                a: ["Världssjälen, det gudomliga som finns i allt.", "Den gudomliga kraft som genomsyrar allt."],
+                wrong: ["Skaparguden i hinduismen.", "Den högsta kasten i kastsystemet.", "Den heliga floden i Indien."],
+                category: "Gudar och tro", categoryId: 2
+            },
+            {
+                id: 9,
+                q: "Vilka tre gudar är viktigast i hinduismen?",
+                a: ["Brahma (skapare), Vishnu (bevarare) och Shiva (förgörare).", "Brahma, Vishnu och Shiva - trimurti."],
+                wrong: ["Krishna, Rama och Ganesha.", "Vishnu, Shiva och Lakshmi.", "Brahma, Durga och Kali."],
+                category: "Gudar och tro", categoryId: 2
+            },
 
             // Fråga 10-13: Heliga texter
-            { id: 10, q: "Vad är sanskrit?", a: "Ett gammalt språk som de heliga texterna skrevs på.", category: "Heliga texter", categoryId: 3 },
-            { id: 11, q: "Vad betyder att recitera?", a: "Att läsa eller säga något högt, ofta utantill.", category: "Heliga texter", categoryId: 3 },
-            { id: 12, q: "Nämn viktiga heliga texter inom hinduismen.", a: "Veda, Upanishaderna, Mahabharata (Bhagavadgita) och Ramayana.", category: "Heliga texter", categoryId: 3 },
-            { id: 13, q: "Varför var muntligt berättande viktigt?", a: "För att bevara texterna exakt innan de skrevs ner.", category: "Heliga texter", categoryId: 3 },
+            {
+                id: 10,
+                q: "Vad är sanskrit?",
+                a: ["Ett gammalt språk som de heliga texterna skrevs på.", "Det klassiska språket för hinduismens heliga skrifter."],
+                wrong: ["En helig text inom hinduismen.", "En typ av meditation.", "En religiös ceremoni."],
+                category: "Heliga texter", categoryId: 3
+            },
+            {
+                id: 11,
+                q: "Vad betyder att recitera?",
+                a: ["Att läsa eller säga något högt, ofta utantill.", "Att upprepa heliga texter muntligt."],
+                wrong: ["Att skriva ner heliga texter.", "Att meditera i tystnad.", "Att offra till gudarna."],
+                category: "Heliga texter", categoryId: 3
+            },
+            {
+                id: 12,
+                q: "Vilka är viktiga heliga texter inom hinduismen?",
+                a: ["Veda, Upanishaderna, Mahabharata och Ramayana.", "Veda, Bhagavadgita, Upanishaderna och Ramayana."],
+                wrong: ["Koranen, Bibeln och Toran.", "Tripitaka, Dhammapada och Jataka.", "Guru Granth Sahib och Dasam Granth."],
+                category: "Heliga texter", categoryId: 3
+            },
+            {
+                id: 13,
+                q: "Varför var muntligt berättande viktigt i hinduismen?",
+                a: ["För att bevara texterna exakt innan de skrevs ner.", "För att föra vidare de heliga texterna genom generationer."],
+                wrong: ["För att vanliga människor inte fick läsa texterna.", "För att papper inte fanns i Indien.", "För att gudarna förbjöd skrift."],
+                category: "Heliga texter", categoryId: 3
+            },
 
             // Fråga 14-17: Centrala tankar
-            { id: 14, q: "Vad är de fem levnadsreglerna (yama)?", a: "Ahimsa (icke-våld), satya (sanning), asteya (inte stjäla), brahmacharya (ansvar), aparigraha (inte vara girig).", category: "Centrala tankar", categoryId: 4 },
-            { id: 15, q: "Vad är samsara?", a: "Livets kretslopp - cykeln av födelse, liv, död och återfödelse.", category: "Centrala tankar", categoryId: 4 },
-            { id: 16, q: "Vad är karma?", a: "Handlingarnas konsekvenser - goda handlingar ger bättre återfödelse.", category: "Centrala tankar", categoryId: 4 },
-            { id: 17, q: "Vad är reinkarnation?", a: "Återfödelse till ett nytt liv.", category: "Centrala tankar", categoryId: 4 },
-            { id: 18, q: "Vad är dharma?", a: "Plikt och livsuppgift som varierar beroende på livssituation.", category: "Centrala tankar", categoryId: 4 },
-            { id: 19, q: "Vad är maya?", a: "Illusionen som döljer sanningen om verkligheten.", category: "Centrala tankar", categoryId: 4 },
-            { id: 20, q: "Vad är moksha?", a: "Befrielse från samsara, att inte återfödas.", category: "Centrala tankar", categoryId: 4 },
+            {
+                id: 14,
+                q: "Vilka är de fem levnadsreglerna (yama)?",
+                a: ["Ahimsa (icke-våld), satya (sanning), asteya (inte stjäla), brahmacharya (ansvar), aparigraha (inte vara girig).", "Icke-våld, sanning, inte stjäla, självkontroll och att inte vara girig."],
+                wrong: ["Karma, dharma, moksha, samsara och atman.", "Bön, fasta, pilgrimsfärd, allmosor och trosbekännelse.", "Meditation, yoga, offer, renhet och fromhet."],
+                category: "Centrala tankar", categoryId: 4
+            },
+            {
+                id: 15,
+                q: "Vad är samsara?",
+                a: ["Livets kretslopp - cykeln av födelse, liv, död och återfödelse.", "Kretsloppet av återfödelser."],
+                wrong: ["Befrielse från återfödelse.", "Den individuella själen.", "Summan av alla handlingar."],
+                category: "Centrala tankar", categoryId: 4
+            },
+            {
+                id: 16,
+                q: "Vad är karma?",
+                a: ["Handlingarnas konsekvenser - goda handlingar ger bättre återfödelse.", "Lagen om orsak och verkan för handlingar."],
+                wrong: ["Livets kretslopp av återfödelse.", "Befrielse från lidande.", "Den gudomliga plikten."],
+                category: "Centrala tankar", categoryId: 4
+            },
+            {
+                id: 17,
+                q: "Vad är reinkarnation?",
+                a: ["Återfödelse till ett nytt liv.", "Att själen föds på nytt i en annan kropp."],
+                wrong: ["Befrielse från återfödelse.", "Förening med världssjälen.", "En typ av meditation."],
+                category: "Centrala tankar", categoryId: 4
+            },
+            {
+                id: 18,
+                q: "Vad är dharma?",
+                a: ["Plikt och livsuppgift som varierar beroende på livssituation.", "Den religiösa och moraliska plikten."],
+                wrong: ["Handlingarnas konsekvenser.", "Befrielse från återfödelse.", "Illusionen som döljer sanningen."],
+                category: "Centrala tankar", categoryId: 4
+            },
+            {
+                id: 19,
+                q: "Vad är maya?",
+                a: ["Illusionen som döljer sanningen om verkligheten.", "Den materiella världens bedrägliga sken."],
+                wrong: ["Den individuella själen.", "Världssjälen.", "En gudinna i hinduismen."],
+                category: "Centrala tankar", categoryId: 4
+            },
+            {
+                id: 20,
+                q: "Vad är moksha?",
+                a: ["Befrielse från samsara, att slippa återfödas.", "Själens befrielse och förening med brahman."],
+                wrong: ["Livets kretslopp.", "Handlingarnas konsekvenser.", "Den religiösa plikten."],
+                category: "Centrala tankar", categoryId: 4
+            },
 
             // Gud och tro
-            { id: 21, q: "Vad är en avatar?", a: "En gud i mänsklig gestalt, till exempel Krishna eller Rama.", category: "Gudar och tro", categoryId: 2 },
-            { id: 22, q: "Är hinduismen monoteistisk eller polyteistisk?", a: "Både och – många gudar men alla är uttryck för brahman.", category: "Gudar och tro", categoryId: 2 },
-            { id: 23, q: "Vad är dualism?", a: "Tanken att världen består av motsatser, som gott och ont.", category: "Gudar och tro", categoryId: 2 },
-            { id: 24, q: "Hur hänger gudarna ihop med brahman?", a: "De är olika sidor av samma gudomliga verklighet.", category: "Gudar och tro", categoryId: 2 },
+            {
+                id: 21,
+                q: "Vad är en avatar?",
+                a: ["En gud i mänsklig gestalt, till exempel Krishna eller Rama.", "En gudomlig inkarnation på jorden."],
+                wrong: ["En helig text.", "En typ av präst.", "En religiös ceremoni."],
+                category: "Gudar och tro", categoryId: 2
+            },
+            {
+                id: 22,
+                q: "Är hinduismen monoteistisk eller polyteistisk?",
+                a: ["Både och – många gudar men alla är uttryck för brahman.", "Kan ses som båda, eftersom alla gudar är aspekter av en kraft."],
+                wrong: ["Endast polyteistisk med tusentals separata gudar.", "Endast monoteistisk med Brahma som enda gud.", "Varken eller, hinduismen har inga gudar."],
+                category: "Gudar och tro", categoryId: 2
+            },
+            {
+                id: 23,
+                q: "Vad är dualism?",
+                a: ["Tanken att världen består av motsatser, som gott och ont.", "Att verkligheten har två grundläggande principer."],
+                wrong: ["Tron på två huvudgudar.", "Att man tillhör två kaster samtidigt.", "En form av meditation med två steg."],
+                category: "Gudar och tro", categoryId: 2
+            },
+            {
+                id: 24,
+                q: "Hur hänger gudarna ihop med brahman?",
+                a: ["De är olika sidor av samma gudomliga verklighet.", "Alla gudar är manifestationer av brahman."],
+                wrong: ["De är helt separata och oberoende väsen.", "Brahman skapade gudarna som sina tjänare.", "Gudarna konkurrerar med brahman om makt."],
+                category: "Gudar och tro", categoryId: 2
+            },
 
             // Människan, ondska, liv och död
-            { id: 25, q: "Vad är rent och orent enligt hinduismen?", a: "Kroppsvätskor och död ses som orent. Vatten, eld och kon ses som renande.", category: "Liv och död", categoryId: 5 },
-            { id: 26, q: "Vad orsakar ondska enligt hinduismen?", a: "Okunnighet och dåliga val.", category: "Liv och död", categoryId: 5 },
-            { id: 27, q: "Föds man ond enligt hinduismen?", a: "Nej, man blir god eller ond genom sina handlingar.", category: "Liv och död", categoryId: 5 },
-            { id: 28, q: "Hur ser hinduismen på liv och död?", a: "Själen vandrar vidare i samsara tills den når moksha.", category: "Liv och död", categoryId: 5 },
+            {
+                id: 25,
+                q: "Vad ses som orent respektive renande i hinduismen?",
+                a: ["Orent: kroppsvätskor och död. Renande: vatten, eld och kon.", "Kroppsvätskor är orena; vatten och eld renar."],
+                wrong: ["Orent: templen. Renande: gatorna.", "Orent: vegetarisk mat. Renande: kött.", "Orent: floden Ganges. Renande: städerna."],
+                category: "Liv och död", categoryId: 5
+            },
+            {
+                id: 26,
+                q: "Vad orsakar ondska enligt hinduismen?",
+                a: ["Okunnighet och dåliga val.", "Brist på kunskap om dharma."],
+                wrong: ["En ond gud som strider mot de goda.", "Att vara född i fel kast.", "Att inte offra tillräckligt till gudarna."],
+                category: "Liv och död", categoryId: 5
+            },
+            {
+                id: 27,
+                q: "Föds man ond enligt hinduismen?",
+                a: ["Nej, man blir god eller ond genom sina handlingar.", "Nej, ondska kommer från handlingar, inte födsel."],
+                wrong: ["Ja, det bestäms av ens förra liv.", "Ja, om man föds i en låg kast.", "Ja, alla föds med arvsynd."],
+                category: "Liv och död", categoryId: 5
+            },
+            {
+                id: 28,
+                q: "Hur ser hinduismen på liv och död?",
+                a: ["Själen vandrar vidare i samsara tills den når moksha.", "Livet är ett kretslopp tills själen blir befriad."],
+                wrong: ["Livet slutar helt vid döden.", "Man döms till himmel eller helvete.", "Alla återföds som djur i nästa liv."],
+                category: "Liv och död", categoryId: 5
+            },
 
             // Kastsystemet
-            { id: 29, q: "Vad är kastsystemet?", a: "Ett system där människor delas in i grupper från födseln.", category: "Kastsystemet", categoryId: 6 },
-            { id: 30, q: "Hur uppstod kastsystemet?", a: "I det tidiga hinduiska samhället för att skapa ordning.", category: "Kastsystemet", categoryId: 6 },
-            { id: 31, q: "Vilka är de fyra varna?", a: "Brahminer, kshatriyer, vaishyer och shudrer.", category: "Kastsystemet", categoryId: 6 },
-            { id: 32, q: "Hur hamnar man i en kast?", a: "Man föds in i den.", category: "Kastsystemet", categoryId: 6 },
-            { id: 33, q: "Vad hände 1950 gällande kastsystemet?", a: "Oberörbarhet förbjöds i lag i Indien.", category: "Kastsystemet", categoryId: 6 },
-            { id: 34, q: "Finns kastsystemet kvar idag?", a: "Ja, socialt, men diskriminering är förbjuden i lag.", category: "Kastsystemet", categoryId: 6 },
-            { id: 35, q: "Var finns kastsystemet främst?", a: "I Indien och Sydasien.", category: "Kastsystemet", categoryId: 6 },
-            { id: 36, q: "Vad gör den indiska staten mot kastsystemet och har det hjälpt?", a: "Kvoter i utbildning och jobb – har hjälpt vissa men inte tagit bort alla problem.", category: "Kastsystemet", categoryId: 6 },
+            {
+                id: 29,
+                q: "Vad är kastsystemet?",
+                a: ["Ett system där människor delas in i grupper från födseln.", "En social hierarki baserad på födsel."],
+                wrong: ["Ett system för att välja religiösa ledare.", "En metod för att organisera tempel.", "Ett sätt att dela in heliga texter."],
+                category: "Kastsystemet", categoryId: 6
+            },
+            {
+                id: 30,
+                q: "Hur uppstod kastsystemet?",
+                a: ["I det tidiga hinduiska samhället för att skapa ordning.", "Som ett sätt att organisera samhället i det forntida Indien."],
+                wrong: ["Det skapades av britterna under kolonitiden.", "Det kom från buddhismen.", "Det uppstod efter Indiens självständighet."],
+                category: "Kastsystemet", categoryId: 6
+            },
+            {
+                id: 31,
+                q: "Vilka är de fyra varna (kasterna)?",
+                a: ["Brahminer, kshatriyer, vaishyer och shudrer.", "Brahminer (präster), kshatriyer (krigare), vaishyer (köpmän) och shudrer (tjänare)."],
+                wrong: ["Vishnu, Shiva, Brahma och Ganesha.", "Karma, dharma, moksha och samsara.", "Veda, Upanishad, Mahabharata och Ramayana."],
+                category: "Kastsystemet", categoryId: 6
+            },
+            {
+                id: 32,
+                q: "Hur hamnar man i en kast?",
+                a: ["Man föds in i den.", "Kasttillhörighet ärvs från föräldrarna."],
+                wrong: ["Man väljer själv vid 18 års ålder.", "Prästerna avgör baserat på horoskop.", "Man kan byta kast genom utbildning."],
+                category: "Kastsystemet", categoryId: 6
+            },
+            {
+                id: 33,
+                q: "Vad hände 1950 gällande kastsystemet?",
+                a: ["Oberörbarhet förbjöds i lag i Indien.", "Diskriminering baserad på kast blev olagligt."],
+                wrong: ["Kastsystemet avskaffades helt.", "En ny femte kast skapades.", "Indien blev ett hinduiskt teokrati."],
+                category: "Kastsystemet", categoryId: 6
+            },
+            {
+                id: 34,
+                q: "Finns kastsystemet kvar idag?",
+                a: ["Ja, socialt, men diskriminering är förbjuden i lag.", "Det finns kvar i praktiken, fast det är olagligt att diskriminera."],
+                wrong: ["Nej, det avskaffades helt 1950.", "Ja, och det är fullt lagligt.", "Nej, det finns bara i Nepal."],
+                category: "Kastsystemet", categoryId: 6
+            },
+            {
+                id: 35,
+                q: "Var finns kastsystemet främst?",
+                a: ["I Indien och Sydasien.", "I Indien, Nepal och andra sydasiatiska länder."],
+                wrong: ["I hela Asien.", "Endast i religiösa sammanhang i tempel.", "I alla länder med hinduer."],
+                category: "Kastsystemet", categoryId: 6
+            },
+            {
+                id: 36,
+                q: "Vad gör Indien mot kastsystemet?",
+                a: ["Kvoter i utbildning och jobb – har hjälpt vissa men inte löst alla problem.", "Positiv särbehandling för lägre kaster."],
+                wrong: ["Ingenting, staten stödjer kastsystemet.", "Tvångsomflyttning av människor mellan kaster.", "Total ignorering av frågan."],
+                category: "Kastsystemet", categoryId: 6
+            },
 
             // Uttryck och handlingar
-            { id: 37, q: "Vad är puja?", a: "Daglig bön och offer till gudarna.", category: "Uttryck och handlingar", categoryId: 7 },
-            { id: 38, q: "Varför är många hinduer vegetarianer?", a: "På grund av ahimsa – allt liv är heligt.", category: "Uttryck och handlingar", categoryId: 7 },
-            { id: 39, q: "Vad är yoga?", a: "Metoder för att kontrollera kropp och sinne.", category: "Uttryck och handlingar", categoryId: 7 },
-            { id: 40, q: "Vad är askes och vad är en guru?", a: "Askes = avstå från begär. Guru = andlig lärare.", category: "Uttryck och handlingar", categoryId: 7 },
+            {
+                id: 37,
+                q: "Vad är puja?",
+                a: ["Daglig bön och offer till gudarna.", "Hinduisk gudstjänst med bön och offergåvor."],
+                wrong: ["En helig text.", "En pilgrimsfärd.", "En typ av yoga."],
+                category: "Uttryck och handlingar", categoryId: 7
+            },
+            {
+                id: 38,
+                q: "Varför är många hinduer vegetarianer?",
+                a: ["På grund av ahimsa – allt liv är heligt.", "Icke-våld (ahimsa) gör att man inte vill skada djur."],
+                wrong: ["För att kött är för dyrt i Indien.", "För att det står i Veda att man måste.", "För att gudarna förbjuder all mat utom grönsaker."],
+                category: "Uttryck och handlingar", categoryId: 7
+            },
+            {
+                id: 39,
+                q: "Vad är yoga?",
+                a: ["Metoder för att kontrollera kropp och sinne.", "Tekniker för andlig och fysisk disciplin."],
+                wrong: ["En helig text från Indien.", "En gud i hinduismen.", "Ett namn på en kast."],
+                category: "Uttryck och handlingar", categoryId: 7
+            },
+            {
+                id: 40,
+                q: "Vad är askes och vad är en guru?",
+                a: ["Askes = avstå från begär. Guru = andlig lärare.", "Askes är självförnekelse, guru är en vis lärare."],
+                wrong: ["Askes = meditation. Guru = tempelbyggnad.", "Askes = helig text. Guru = offergåva.", "Askes = pilgrimsfärd. Guru = helig flod."],
+                category: "Uttryck och handlingar", categoryId: 7
+            },
 
             // Riter och platser
-            { id: 41, q: "Vad är övergångsriter?", a: "Ritualer vid till exempel födelse, äktenskap och död.", category: "Riter och platser", categoryId: 8 },
-            { id: 42, q: "Ge exempel på hinduiska högtider.", a: "Diwali, Holi, Navaratri.", category: "Riter och platser", categoryId: 8 },
-            { id: 43, q: "Vad är ett hinduiskt tempel?", a: "Gudarnas bostad.", category: "Riter och platser", categoryId: 8 },
-            { id: 44, q: "Varför är Varanasi och Ganges viktiga?", a: "De anses rena och hjälpa själen mot moksha.", category: "Riter och platser", categoryId: 8 },
+            {
+                id: 41,
+                q: "Vad är övergångsriter?",
+                a: ["Ritualer vid födelse, äktenskap och död.", "Ceremonier som markerar livets viktiga skeden."],
+                wrong: ["Riter för att byta kast.", "Ceremonier för att bli präst.", "Ritualer som endast utförs i tempel."],
+                category: "Riter och platser", categoryId: 8
+            },
+            {
+                id: 42,
+                q: "Ge exempel på hinduiska högtider.",
+                a: ["Diwali, Holi och Navaratri.", "Diwali (ljusfesten), Holi (färgfesten) och Navaratri."],
+                wrong: ["Ramadan, Eid och Ashura.", "Jul, påsk och pingst.", "Vesak, Songkran och Loy Krathong."],
+                category: "Riter och platser", categoryId: 8
+            },
+            {
+                id: 43,
+                q: "Vad är ett hinduiskt tempel?",
+                a: ["Gudarnas bostad.", "En plats där gudarna bor och kan tillbes."],
+                wrong: ["Endast en samlingsplats för bön.", "Ett museum för religiösa föremål.", "En skola för präster."],
+                category: "Riter och platser", categoryId: 8
+            },
+            {
+                id: 44,
+                q: "Varför är Varanasi och Ganges viktiga?",
+                a: ["De anses rena och hjälpa själen mot moksha.", "Ganges vatten renar och att dö i Varanasi ger befrielse."],
+                wrong: ["Det är där hinduismen grundades.", "Det är där alla gudar bor.", "Det är de enda platserna där man får be."],
+                category: "Riter och platser", categoryId: 8
+            },
 
             // Symboler och riktningar
-            { id: 45, q: "Nämn tre symboler och deras betydelse inom hinduismen.", a: "Aum (världssjälen), lotus (renhet), ko (heligt djur).", category: "Symboler", categoryId: 9 },
-            { id: 46, q: "Vad betyder swastika inom hinduismen?", a: "Liv och kretslopp (en gammal religiös symbol).", category: "Symboler", categoryId: 9 },
-            { id: 47, q: "Nämn tre riktningar inom hinduismen.", a: "Vaishnavism, shaivism och shaktism.", category: "Riktningar", categoryId: 10 },
+            {
+                id: 45,
+                q: "Nämn tre viktiga symboler inom hinduismen.",
+                a: ["Aum (världssjälen), lotus (renhet) och kon (heligt djur).", "Aum, lotusblomman och den heliga kon."],
+                wrong: ["Korset, månskäran och davidsstjärnan.", "Svärdet, bägaren och ringen.", "Fisken, ankaret och duvan."],
+                category: "Symboler", categoryId: 9
+            },
+            {
+                id: 46,
+                q: "Vad betyder swastika inom hinduismen?",
+                a: ["Liv och kretslopp (en gammal religiös symbol).", "Lycka och välgång – en urgammal indisk symbol."],
+                wrong: ["Död och förstörelse.", "Krig och erövring.", "Sorg och förlust."],
+                category: "Symboler", categoryId: 9
+            },
+            {
+                id: 47,
+                q: "Nämn tre riktningar inom hinduismen.",
+                a: ["Vaishnavism, shaivism och shaktism.", "Vaishnavism (Vishnu), shaivism (Shiva) och shaktism (shakti)."],
+                wrong: ["Sunni, shia och sufi.", "Theravada, mahayana och vajrayana.", "Katolicism, protestantism och ortodoxi."],
+                category: "Riktningar", categoryId: 10
+            },
 
             // Samhälle
-            { id: 48, q: "Vad är patriarkat?", a: "Ett samhälle där män har mer makt än kvinnor.", category: "Samhälle", categoryId: 11 },
-            { id: 49, q: "Vad är hijras?", a: "Ett tredje kön som är erkänt i Indien sedan 2014.", category: "Samhälle", categoryId: 11 },
-            { id: 50, q: "Vad är sadhus?", a: "Heliga asketer som lever enkelt.", category: "Samhälle", categoryId: 11 }
+            {
+                id: 48,
+                q: "Vad är patriarkat?",
+                a: ["Ett samhälle där män har mer makt än kvinnor.", "Ett system där män dominerar i familj och samhälle."],
+                wrong: ["Ett samhälle där kvinnor har mer makt.", "Ett religiöst styre av präster.", "Ett samhälle utan klassindelning."],
+                category: "Samhälle", categoryId: 11
+            },
+            {
+                id: 49,
+                q: "Vad är hijras?",
+                a: ["Ett tredje kön erkänt i Indien sedan 2014.", "Transpersoner som erkänns som ett tredje kön i Indien."],
+                wrong: ["En hög kast av präster.", "Kvinnliga munkar.", "Heliga pilgrimmer."],
+                category: "Samhälle", categoryId: 11
+            },
+            {
+                id: 50,
+                q: "Vad är sadhus?",
+                a: ["Heliga asketer som lever enkelt.", "Hinduiska heliga män som avstår från materiella ägodelar."],
+                wrong: ["Rika tempelpräster.", "Krigare som skyddar tempel.", "Köpmän som säljer religiösa föremål."],
+                category: "Samhälle", categoryId: 11
+            }
         ];
 
         const categories = [
@@ -1354,11 +1667,24 @@
             return array;
         }
 
-        // Generate wrong answers
+        // Generate wrong answers from curated list
         function generateWrongAnswers(correctQuestion) {
+            if (correctQuestion.wrong && correctQuestion.wrong.length >= 3) {
+                // Use curated wrong answers
+                return shuffleArray([...correctQuestion.wrong]).slice(0, 3);
+            }
+            // Fallback: use answers from other questions (shouldn't happen now)
             const otherQuestions = questions.filter(q => q.id !== correctQuestion.id);
             const shuffled = shuffleArray([...otherQuestions]);
-            return shuffled.slice(0, 3).map(q => q.a);
+            return shuffled.slice(0, 3).map(q => Array.isArray(q.a) ? q.a[0] : q.a);
+        }
+
+        // Get correct answer (randomly pick from variations)
+        function getCorrectAnswer(question) {
+            if (Array.isArray(question.a)) {
+                return question.a[Math.floor(Math.random() * question.a.length)];
+            }
+            return question.a;
         }
 
         // Show question
@@ -1383,9 +1709,11 @@
                 streakIndicator.classList.remove('hot');
             }
 
-            // Generate answers
+            // Generate answers - pick one correct answer randomly from alternatives
+            const correctAnswer = getCorrectAnswer(q);
+            gameState.currentCorrectAnswer = correctAnswer;
             const wrongAnswers = generateWrongAnswers(q);
-            const allAnswers = shuffleArray([q.a, ...wrongAnswers]);
+            const allAnswers = shuffleArray([correctAnswer, ...wrongAnswers]);
 
             const container = document.getElementById('answersContainer');
             container.innerHTML = '';
@@ -1394,7 +1722,7 @@
                 const btn = document.createElement('button');
                 btn.className = 'answer-btn';
                 btn.textContent = answer;
-                btn.onclick = () => selectAnswer(btn, answer === q.a, q);
+                btn.onclick = () => selectAnswer(btn, answer === correctAnswer, q);
                 container.appendChild(btn);
             });
 
@@ -1432,11 +1760,10 @@
 
         // Time up
         function timeUp() {
-            const q = gameState.gameQuestions[gameState.currentQuestionIndex];
             const buttons = document.querySelectorAll('.answer-btn');
             buttons.forEach(btn => {
                 btn.disabled = true;
-                if (btn.textContent === q.a) {
+                if (btn.textContent === gameState.currentCorrectAnswer) {
                     btn.classList.add('correct');
                 }
             });
@@ -1444,10 +1771,16 @@
             gameState.streak = 0;
             document.getElementById('streakCount').textContent = '0';
 
-            setTimeout(() => {
+            // Show "Nästa" button
+            const container = document.getElementById('answersContainer');
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'answer-btn next-btn';
+            nextBtn.textContent = 'Nästa fråga →';
+            nextBtn.onclick = () => {
                 gameState.currentQuestionIndex++;
                 showQuestion();
-            }, 1500);
+            };
+            container.appendChild(nextBtn);
         }
 
         // Select answer
@@ -1498,7 +1831,7 @@
 
                 // Show correct answer
                 buttons.forEach(b => {
-                    if (b.textContent === question.a) {
+                    if (b.textContent === gameState.currentCorrectAnswer) {
                         b.classList.add('correct');
                     }
                 });
@@ -1512,10 +1845,24 @@
             document.getElementById('gameScore').textContent = gameState.currentScore;
             document.getElementById('streakCount').textContent = gameState.streak;
 
-            setTimeout(() => {
-                gameState.currentQuestionIndex++;
-                showQuestion();
-            }, 1500);
+            if (isCorrect) {
+                // Auto-advance after correct answer
+                setTimeout(() => {
+                    gameState.currentQuestionIndex++;
+                    showQuestion();
+                }, 1200);
+            } else {
+                // Show "Nästa" button for wrong answers
+                const container = document.getElementById('answersContainer');
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'answer-btn next-btn';
+                nextBtn.textContent = 'Nästa fråga →';
+                nextBtn.onclick = () => {
+                    gameState.currentQuestionIndex++;
+                    showQuestion();
+                };
+                container.appendChild(nextBtn);
+            }
         }
 
         // Show combo popup
@@ -1543,8 +1890,10 @@
             document.getElementById('bossQuestion').textContent = q.q;
             document.getElementById('bossScore').textContent = gameState.currentScore;
 
+            const correctAnswer = getCorrectAnswer(q);
+            gameState.currentCorrectAnswer = correctAnswer;
             const wrongAnswers = generateWrongAnswers(q);
-            const allAnswers = shuffleArray([q.a, ...wrongAnswers]);
+            const allAnswers = shuffleArray([correctAnswer, ...wrongAnswers]);
 
             const container = document.getElementById('bossAnswers');
             container.innerHTML = '';
@@ -1553,7 +1902,7 @@
                 const btn = document.createElement('button');
                 btn.className = 'answer-btn';
                 btn.textContent = answer;
-                btn.onclick = () => selectBossAnswer(btn, answer === q.a, q);
+                btn.onclick = () => selectBossAnswer(btn, answer === correctAnswer, q);
                 container.appendChild(btn);
             });
         }
@@ -1581,7 +1930,7 @@
             } else {
                 btn.classList.add('wrong');
                 buttons.forEach(b => {
-                    if (b.textContent === question.a) b.classList.add('correct');
+                    if (b.textContent === gameState.currentCorrectAnswer) b.classList.add('correct');
                 });
                 showCombo('Miss! 😈');
             }
@@ -1613,7 +1962,7 @@
 
             const q = gameState.flashcardShuffled[gameState.flashcardIndex];
             document.getElementById('flashcardQuestion').textContent = q.q;
-            document.getElementById('flashcardAnswer').textContent = q.a;
+            document.getElementById('flashcardAnswer').textContent = getCorrectAnswer(q);
             document.getElementById('flashcardProgress').textContent =
                 `${gameState.flashcardIndex + 1}/${gameState.flashcardShuffled.length}`;
 
