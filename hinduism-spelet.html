@@ -1339,7 +1339,7 @@
                 showBossQuestion();
             } else if (mode === 'write') {
                 gameState.totalQuestions = 10;
-                gameState.gameQuestions = shuffleArray([...questions]).slice(0, 10);
+                gameState.gameQuestions = shuffleArray([...writeQuestions]).slice(0, 10);
                 showScreen('writeScreen');
                 showWriteQuestion();
             }
@@ -1652,59 +1652,59 @@
             showFlashcard();
         }
 
-        // Write mode - simple 1-3 word answers
-        const shortAnswers = {
-            1: ["gammal religion", "religion"],
-            2: ["inte missionera", "inte omvända"],
-            3: ["indus"],
-            4: ["indien nepal", "indien", "nepal"],
-            5: ["3000 år", "3000"],
-            6: ["veda", "vedaskrifterna"],
-            7: ["skaparguden", "skapare"],
-            8: ["världssjälen"],
-            9: ["brahma vishnu shiva"],
-            10: ["sanskrit"],
-            11: ["läsa högt", "utantill"],
-            12: ["veda", "mahabharata", "ramayana"],
-            13: ["muntligt", "bevara"],
-            14: ["ahimsa", "icke-våld"],
-            15: ["kretslopp", "livets kretslopp"],
-            16: ["handlingarnas konsekvenser", "karma"],
-            17: ["återfödelse"],
-            18: ["plikt", "livsuppgift"],
-            19: ["illusion"],
-            20: ["befrielse", "slippa återfödas"],
-            21: ["gud människa", "krishna", "rama"],
-            22: ["både och"],
-            23: ["motsatser"],
-            24: ["samma verklighet", "brahman"],
-            25: ["kroppsvätskor orent", "vatten renar"],
-            26: ["okunnighet"],
-            27: ["nej handlingar", "nej"],
-            28: ["samsara moksha"],
-            29: ["födelsegrupper", "grupper"],
-            30: ["ordning"],
-            31: ["brahminer kshatriyer vaishyer shudrer"],
-            32: ["föds in", "födsel"],
-            33: ["1950", "förbjöds"],
-            34: ["ja socialt"],
-            35: ["indien", "sydasien"],
-            36: ["kvoter"],
-            37: ["bön offer", "puja"],
-            38: ["ahimsa"],
-            39: ["kropp sinne"],
-            40: ["askes guru"],
-            41: ["övergångsriter", "ritualer"],
-            42: ["diwali holi navaratri", "diwali", "holi"],
-            43: ["gudarnas bostad"],
-            44: ["rena moksha"],
-            45: ["aum lotus ko"],
-            46: ["liv kretslopp"],
-            47: ["vaishnavism shaivism shaktism"],
-            48: ["män makt"],
-            49: ["tredje kön"],
-            50: ["asketer", "sadhus"]
-        };
+        // Write mode - questions designed for 1-2 word answers
+        const writeQuestions = [
+            { q: "Hinduismens äldsta heliga skrifter heter?", a: ["veda", "vedaskrifterna"] },
+            { q: "Språket som de heliga texterna skrevs på?", a: ["sanskrit"] },
+            { q: "Skaparguden i hinduismen heter?", a: ["brahma"] },
+            { q: "Bevararguden i hinduismen heter?", a: ["vishnu"] },
+            { q: "Förstörarguden/förnyaren i hinduismen heter?", a: ["shiva"] },
+            { q: "Världssjälen kallas?", a: ["brahman"] },
+            { q: "Livets kretslopp (födelse-död-återfödelse) kallas?", a: ["samsara"] },
+            { q: "Summan av dina handlingar kallas?", a: ["karma"] },
+            { q: "Återfödelse till nytt liv kallas?", a: ["reinkarnation"] },
+            { q: "Din plikt/livsuppgift kallas?", a: ["dharma"] },
+            { q: "Illusionen som döljer sanningen kallas?", a: ["maya"] },
+            { q: "Befrielse från återfödelse kallas?", a: ["moksha"] },
+            { q: "Den individuella själen kallas?", a: ["atman"] },
+            { q: "Icke-våld heter på sanskrit?", a: ["ahimsa"] },
+            { q: "Daglig bön och offer kallas?", a: ["puja"] },
+            { q: "En andlig lärare kallas?", a: ["guru"] },
+            { q: "Heliga asketer som lever enkelt kallas?", a: ["sadhus", "sadhu"] },
+            { q: "Ljusets högtid heter?", a: ["diwali"] },
+            { q: "Färgfesten på våren heter?", a: ["holi"] },
+            { q: "Hinduismens heligaste flod?", a: ["ganges", "ganga"] },
+            { q: "Helig stad vid Ganges?", a: ["varanasi"] },
+            { q: "Vilket djur är heligt?", a: ["kon", "ko", "kor"] },
+            { q: "Det heliga ljudet/symbolen för brahman?", a: ["aum", "om"] },
+            { q: "Symbolen för renhet (blomma)?", a: ["lotus", "lotusblomma"] },
+            { q: "Vilka två länder har flest hinduer?", a: ["indien nepal", "indien", "nepal"] },
+            { q: "Hur gammal är hinduismen? (ca år)", a: ["3000", "3000 år", "3500"] },
+            { q: "Riktningen som dyrkar Vishnu?", a: ["vaishnavism", "vishnuism"] },
+            { q: "Riktningen som dyrkar Shiva?", a: ["shaivism", "shivaism"] },
+            { q: "Riktningen som dyrkar shakti (kvinnlig kraft)?", a: ["shaktism"] },
+            { q: "Ett tredje kön erkänt i Indien?", a: ["hijras", "hijra"] },
+            { q: "År då oberörbarhet förbjöds i Indien?", a: ["1950"] },
+            { q: "System där man föds in i grupper?", a: ["kastsystemet", "kast"] },
+            { q: "Samhälle där män har mest makt?", a: ["patriarkat", "patriarkalt"] },
+            { q: "Gud i mänsklig gestalt kallas?", a: ["avatar"] },
+            { q: "Krishna och Rama är exempel på?", a: ["avatar", "avatarer"] },
+            { q: "Metod för att kontrollera kropp och sinne?", a: ["yoga"] },
+            { q: "Att avstå från begär kallas?", a: ["askes"] },
+            { q: "Vishnus avatar som besegrade Ravana?", a: ["rama"] },
+            { q: "Populär avatar som spelar flöjt?", a: ["krishna"] },
+            { q: "Hinduismens heliga epos med Bhagavadgita?", a: ["mahabharata"] },
+            { q: "Eposet om Rama och Sita?", a: ["ramayana"] },
+            { q: "Filosofiska texter om själ och befrielse?", a: ["upanishaderna", "upanishad"] },
+            { q: "Swastika symboliserar liv och?", a: ["kretslopp"] },
+            { q: "Prästernas varna (högsta kasten)?", a: ["brahminer", "brahmin"] },
+            { q: "Vad orsakar ondska enligt hinduismen?", a: ["okunnighet", "okunskap"] },
+            { q: "Vad renar enligt hinduismen? (element)", a: ["vatten", "eld"] },
+            { q: "Nio dagar lång festival för shakti?", a: ["navaratri", "durga puja"] },
+            { q: "Lingam är en symbol för vilken gud?", a: ["shiva"] },
+            { q: "Var kommer ordet 'hindu' från? (flod)", a: ["indus"] },
+            { q: "Hur förs man vidare efter döden? (kroppen)", a: ["kremering", "kremeras", "bränns"] }
+        ];
 
         // Levenshtein distance for fuzzy matching
         function levenshteinDistance(str1, str2) {
@@ -1758,68 +1758,47 @@
             return Math.max(levenshteinSim, prefixSim);
         }
 
-        // Check if answer is correct with fuzzy matching
-        function checkWriteAnswer(userAnswer, questionId) {
+        // Simple fuzzy check for 1-2 word answers
+        function checkWriteAnswerNew(userAnswer, acceptedAnswers) {
             const normalized = normalizeString(userAnswer);
-            const acceptedAnswers = shortAnswers[questionId] || [];
 
-            // Empty answer
             if (normalized.length < 1) {
-                return { result: 'wrong', matched: false };
+                return { correct: false, partial: false };
             }
 
-            // Check against each accepted answer
+            let bestSimilarity = 0;
+
             for (const accepted of acceptedAnswers) {
                 const acceptedNorm = normalizeString(accepted);
 
                 // Exact match
                 if (normalized === acceptedNorm) {
-                    return { result: 'correct', matched: true };
+                    return { correct: true, partial: false };
                 }
 
-                // User answer contains the accepted answer
-                if (normalized.includes(acceptedNorm)) {
-                    return { result: 'correct', matched: true };
-                }
-
-                // Accepted answer contains user answer (if user wrote enough)
-                if (normalized.length >= 3 && acceptedNorm.includes(normalized)) {
-                    return { result: 'correct', matched: true };
-                }
-
-                // Word-by-word fuzzy matching
-                const userWords = normalized.split(' ');
-                const acceptedWords = acceptedNorm.split(' ');
-
-                let matchedWords = 0;
-                for (const acceptedWord of acceptedWords) {
-                    for (const userWord of userWords) {
-                        const sim = similarityScore(userWord, acceptedWord);
-                        if (sim >= 0.7) {  // 70% similarity threshold
-                            matchedWords++;
-                            break;
-                        }
+                // One contains the other
+                if (normalized.includes(acceptedNorm) || acceptedNorm.includes(normalized)) {
+                    if (normalized.length >= 3 || acceptedNorm.length <= 4) {
+                        return { correct: true, partial: false };
                     }
                 }
 
-                // If most words match, it's correct
-                if (matchedWords >= acceptedWords.length * 0.6) {
-                    return { result: 'correct', matched: true };
-                }
+                // Fuzzy similarity
+                const sim = similarityScore(normalized, acceptedNorm);
+                bestSimilarity = Math.max(bestSimilarity, sim);
 
-                // Overall string similarity
-                const overallSim = similarityScore(normalized, acceptedNorm);
-                if (overallSim >= 0.65) {
-                    return { result: 'correct', matched: true };
-                }
-
-                // Partial match (some similarity but not enough)
-                if (overallSim >= 0.4 || matchedWords > 0) {
-                    return { result: 'partial', matched: false, similarity: overallSim };
+                // High similarity = correct
+                if (sim >= 0.75) {
+                    return { correct: true, partial: false };
                 }
             }
 
-            return { result: 'wrong', matched: false };
+            // Partial if somewhat similar
+            if (bestSimilarity >= 0.5) {
+                return { correct: false, partial: true };
+            }
+
+            return { correct: false, partial: false };
         }
 
         // Show write question
@@ -1830,7 +1809,7 @@
             }
 
             const q = gameState.gameQuestions[gameState.currentQuestionIndex];
-            document.getElementById('writeCategory').textContent = q.category;
+            document.getElementById('writeCategory').textContent = 'Skrivläge';
             document.getElementById('writeQuestion').textContent = q.q;
             document.getElementById('writeNumber').textContent =
                 `Fråga ${gameState.currentQuestionIndex + 1} av ${gameState.totalQuestions}`;
@@ -1850,17 +1829,11 @@
             document.getElementById('hintToggle').style.display = 'inline-block';
             document.getElementById('writeHint').style.display = 'none';
 
-            // Generate hint (first letters + word count)
-            const answers = shortAnswers[q.id] || [];
-            if (answers.length > 0) {
-                const mainAnswer = answers[0];
-                const wordCount = mainAnswer.split(' ').length;
-                const firstLetter = mainAnswer.charAt(0).toUpperCase();
-                const hint = wordCount === 1
-                    ? `Börjar på "${firstLetter}", ${mainAnswer.length} bokstäver`
-                    : `${wordCount} ord, börjar på "${firstLetter}"`;
-                document.getElementById('writeHint').textContent = hint;
-            }
+            // Generate hint
+            const mainAnswer = q.a[0];
+            const firstLetter = mainAnswer.charAt(0).toUpperCase();
+            document.getElementById('writeHint').textContent =
+                `Börjar på "${firstLetter}", ${mainAnswer.length} bokstäver`;
 
             const streakIndicator = document.getElementById('writeStreakIndicator');
             if (gameState.streak >= 5) {
@@ -1891,12 +1864,12 @@
             document.getElementById('writeSubmitBtn').disabled = true;
             document.getElementById('hintToggle').style.display = 'none';
 
-            const result = checkWriteAnswer(userAnswer, q.id);
+            const result = checkWriteAnswerNew(userAnswer, q.a);
             const feedback = document.getElementById('writeFeedback');
             const feedbackText = document.getElementById('feedbackText');
             const reveal = document.getElementById('correctAnswerReveal');
 
-            if (result.result === 'correct') {
+            if (result.correct) {
                 feedback.className = 'write-feedback correct';
                 feedbackText.innerHTML = '✅ <strong>Rätt!</strong> Bra jobbat!';
                 reveal.textContent = '';
@@ -1905,15 +1878,10 @@
                 gameState.streak++;
                 gameState.totalCorrect++;
 
-                let points = 150; // More points for writing
+                let points = 150;
                 if (gameState.streak >= 3) points += 50;
                 if (gameState.streak >= 5) points += 50;
                 gameState.currentScore += points;
-
-                if (!gameState.masteredQuestions[q.id]) {
-                    gameState.masteredQuestions[q.id] = 0;
-                }
-                gameState.masteredQuestions[q.id] += 2; // Extra mastery for writing
 
                 if (gameState.streak > gameState.bestStreak) {
                     gameState.bestStreak = gameState.streak;
@@ -1925,26 +1893,20 @@
                 if (gameState.streak === 3) showCombo('3x Combo! 🔥');
                 if (gameState.streak === 5) showCombo('5x SUPER! 💥');
 
-            } else if (result.result === 'partial') {
+            } else if (result.partial) {
                 feedback.className = 'write-feedback partial';
-                const expectedAnswer = shortAnswers[q.id] ? shortAnswers[q.id][0] : '';
                 feedbackText.innerHTML = `⚠️ <strong>Nästan!</strong> Du var nära.`;
-                reveal.innerHTML = `<strong>Rätt svar:</strong> ${expectedAnswer}`;
+                reveal.innerHTML = `<strong>Rätt svar:</strong> ${q.a[0]}`;
 
-                gameState.currentScore += 50; // Partial points
+                gameState.currentScore += 50;
                 gameState.streak = 0;
 
             } else {
                 feedback.className = 'write-feedback wrong';
-                const expectedAnswer = shortAnswers[q.id] ? shortAnswers[q.id][0] : '';
-                feedbackText.innerHTML = '❌ <strong>Fel.</strong> Försök komma ihåg till nästa gång!';
-                reveal.innerHTML = `<strong>Rätt svar:</strong> ${expectedAnswer}`;
+                feedbackText.innerHTML = '❌ <strong>Fel.</strong>';
+                reveal.innerHTML = `<strong>Rätt svar:</strong> ${q.a[0]}`;
 
                 gameState.streak = 0;
-
-                if (gameState.masteredQuestions[q.id]) {
-                    gameState.masteredQuestions[q.id] = Math.max(0, gameState.masteredQuestions[q.id] - 1);
-                }
             }
 
             document.getElementById('writeScore').textContent = gameState.currentScore;
