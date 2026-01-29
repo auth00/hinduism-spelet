@@ -1766,6 +1766,9 @@
                 return { correct: false, partial: false };
             }
 
+            // Check if answer should be a number (year) - require exact match
+            const isNumberAnswer = acceptedAnswers.some(a => /^\d+$/.test(a.trim()));
+
             let bestSimilarity = 0;
 
             for (const accepted of acceptedAnswers) {
@@ -1774,6 +1777,16 @@
                 // Exact match
                 if (normalized === acceptedNorm) {
                     return { correct: true, partial: false };
+                }
+
+                // For numbers/years: only exact match counts
+                if (isNumberAnswer) {
+                    // Extract numbers from user input
+                    const userNumbers = normalized.match(/\d+/g) || [];
+                    if (userNumbers.includes(acceptedNorm)) {
+                        return { correct: true, partial: false };
+                    }
+                    continue; // Skip fuzzy matching for numbers
                 }
 
                 // One contains the other
@@ -1793,8 +1806,8 @@
                 }
             }
 
-            // Partial if somewhat similar
-            if (bestSimilarity >= 0.5) {
+            // Partial if somewhat similar (but not for numbers)
+            if (!isNumberAnswer && bestSimilarity >= 0.5) {
                 return { correct: false, partial: true };
             }
 
