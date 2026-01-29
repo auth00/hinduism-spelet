@@ -636,6 +636,111 @@
             to { transform: translate(-50%, -50%) scale(0); opacity: 0; }
         }
 
+        /* Write Mode */
+        .write-input-container {
+            margin-top: 1rem;
+        }
+
+        .write-input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+            background: rgba(255,255,255,0.1);
+            color: var(--light);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .write-input:focus {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .write-input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .write-submit-btn {
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1rem;
+            background: linear-gradient(135deg, var(--accent), #1db954);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .write-submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .write-submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .write-feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 15px;
+            display: none;
+        }
+
+        .write-feedback.correct {
+            display: block;
+            background: rgba(46, 204, 113, 0.2);
+            border: 2px solid var(--success);
+        }
+
+        .write-feedback.wrong {
+            display: block;
+            background: rgba(231, 76, 60, 0.2);
+            border: 2px solid var(--danger);
+        }
+
+        .write-feedback.partial {
+            display: block;
+            background: rgba(241, 196, 15, 0.2);
+            border: 2px solid var(--gold);
+        }
+
+        .correct-answer-reveal {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .write-hint {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .hint-toggle {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .hint-toggle:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
         /* Boss Battle */
         .boss-container {
             text-align: center;
@@ -740,6 +845,11 @@
                     <div class="title">Boss-strid</div>
                     <div class="desc">Besegra Kunskapens Väktare</div>
                 </div>
+                <div class="menu-btn" onclick="startGame('write')" id="writeBtn">
+                    <div class="icon">✍️</div>
+                    <div class="title">Skrivläge</div>
+                    <div class="desc">Skriv svaren själv!</div>
+                </div>
                 <div class="menu-btn" onclick="showProgress()">
                     <div class="icon">📊</div>
                     <div class="title">Framsteg</div>
@@ -813,6 +923,47 @@
                     Visste! 😊
                 </button>
             </div>
+        </div>
+
+        <!-- Write Mode Screen -->
+        <div class="screen" id="writeScreen">
+            <div class="game-header">
+                <button class="back-btn" onclick="exitGame()">←</button>
+                <div class="streak-indicator" id="writeStreakIndicator">
+                    🔥 <span id="writeStreakCount">0</span>
+                </div>
+                <div class="game-score">
+                    <span id="writeScore">0</span> poäng
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-category" id="writeCategory">Kategori</div>
+                <div class="question-text" id="writeQuestion">Fråga här...</div>
+                <div class="question-number" id="writeNumber">Fråga 1 av 10</div>
+            </div>
+
+            <div class="write-input-container">
+                <input type="text" class="write-input" id="writeInput"
+                       placeholder="Skriv ditt svar här..."
+                       autocomplete="off" autocapitalize="off">
+                <button class="write-submit-btn" id="writeSubmitBtn" onclick="submitWriteAnswer()">
+                    Svara
+                </button>
+                <button class="hint-toggle" id="hintToggle" onclick="toggleHint()">
+                    💡 Visa ledtråd
+                </button>
+                <div class="write-hint" id="writeHint" style="display: none;"></div>
+            </div>
+
+            <div class="write-feedback" id="writeFeedback">
+                <div id="feedbackText"></div>
+                <div class="correct-answer-reveal" id="correctAnswerReveal"></div>
+            </div>
+
+            <button class="primary-btn" id="writeNextBtn" style="display: none;" onclick="nextWriteQuestion()">
+                Nästa fråga →
+            </button>
         </div>
 
         <!-- Boss Battle Screen -->
@@ -1030,7 +1181,8 @@
             { id: "mastered_50", name: "Guru", icon: "✨", desc: "Behärska alla 50 frågor" },
             { id: "speed_demon", name: "Snabbfotad", icon: "⚡", desc: "Klara snabbrunda utan fel" },
             { id: "perfect_10", name: "Perfekt runda", icon: "💯", desc: "10/10 rätt i quiz" },
-            { id: "dedicated", name: "Hängiven", icon: "🙏", desc: "Spela 20 rundor" }
+            { id: "dedicated", name: "Hängiven", icon: "🙏", desc: "Spela 20 rundor" },
+            { id: "writer", name: "Författare", icon: "✍️", desc: "Klara skrivläge utan fel" }
         ];
 
         const titles = [
@@ -1185,6 +1337,11 @@
                 showScreen('bossScreen');
                 document.getElementById('bossHealth').style.width = '100%';
                 showBossQuestion();
+            } else if (mode === 'write') {
+                gameState.totalQuestions = 10;
+                gameState.gameQuestions = shuffleArray([...questions]).slice(0, 10);
+                showScreen('writeScreen');
+                showWriteQuestion();
             }
         }
 
@@ -1495,6 +1652,295 @@
             showFlashcard();
         }
 
+        // Write mode - key answers for fuzzy matching
+        const keyAnswers = {
+            1: ["gammal religion", "livsåskådning", "ingen grundare", "ingen ledare"],
+            2: ["inte omvända", "inte missionera"],
+            3: ["följer hinduismen", "floden indus"],
+            4: ["indien", "nepal"],
+            5: ["3000 år", "3 000 år", "över 3000"],
+            6: ["veda", "vedaskrifterna", "3000", "3500"],
+            7: ["skaparguden", "skapare"],
+            8: ["världssjälen", "gudomliga", "finns i allt"],
+            9: ["brahma", "vishnu", "shiva", "skapare", "bevarare", "förgörare"],
+            10: ["gammalt språk", "heliga texterna"],
+            11: ["läsa högt", "säga högt", "utantill"],
+            12: ["veda", "upanishad", "mahabharata", "bhagavadgita", "ramayana"],
+            13: ["bevara texterna", "innan de skrevs"],
+            14: ["ahimsa", "icke-våld", "satya", "sanning", "asteya", "stjäla"],
+            15: ["kretslopp", "födelse", "död", "återfödelse"],
+            16: ["handlingar", "konsekvenser", "bättre återfödelse"],
+            17: ["återfödelse", "nytt liv"],
+            18: ["plikt", "livsuppgift"],
+            19: ["illusion", "döljer sanningen"],
+            20: ["befrielse", "samsara", "inte återfödas"],
+            21: ["gud i mänsklig", "krishna", "rama"],
+            22: ["både och", "många gudar", "brahman"],
+            23: ["motsatser", "gott och ont"],
+            24: ["olika sidor", "gudomliga verklighet"],
+            25: ["kroppsvätskor", "orent", "vatten", "eld", "kon", "renande"],
+            26: ["okunnighet", "dåliga val"],
+            27: ["nej", "handlingar", "inte född"],
+            28: ["själen vandrar", "samsara", "moksha"],
+            29: ["grupper", "födseln", "delas in"],
+            30: ["tidiga samhället", "skapa ordning"],
+            31: ["brahminer", "kshatriyer", "vaishyer", "shudrer"],
+            32: ["föds in"],
+            33: ["oberörbarhet", "förbjöds", "1950"],
+            34: ["ja", "socialt", "förbjuden i lag"],
+            35: ["indien", "sydasien"],
+            36: ["kvoter", "utbildning", "jobb"],
+            37: ["bön", "offer", "gudarna"],
+            38: ["ahimsa", "allt liv heligt", "icke-våld"],
+            39: ["kontrollera", "kropp", "sinne"],
+            40: ["avstå begär", "andlig lärare"],
+            41: ["ritualer", "födelse", "äktenskap", "död"],
+            42: ["diwali", "holi", "navaratri"],
+            43: ["gudarnas bostad"],
+            44: ["rena", "moksha", "själen"],
+            45: ["aum", "lotus", "ko", "världssjälen", "renhet", "heligt djur"],
+            46: ["liv", "kretslopp"],
+            47: ["vaishnavism", "shaivism", "shaktism"],
+            48: ["män", "mer makt", "kvinnor"],
+            49: ["tredje kön", "erkänt", "2014"],
+            50: ["heliga asketer", "lever enkelt"]
+        };
+
+        // Levenshtein distance for fuzzy matching
+        function levenshteinDistance(str1, str2) {
+            const m = str1.length;
+            const n = str2.length;
+            const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+
+            for (let i = 0; i <= m; i++) dp[i][0] = i;
+            for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    if (str1[i - 1] === str2[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1];
+                    } else {
+                        dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+                    }
+                }
+            }
+            return dp[m][n];
+        }
+
+        // Normalize string for comparison
+        function normalizeString(str) {
+            return str.toLowerCase()
+                .replace(/[.,!?;:'"()–-]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // Check if answer is correct with fuzzy matching
+        function checkWriteAnswer(userAnswer, questionId) {
+            const normalized = normalizeString(userAnswer);
+            const keys = keyAnswers[questionId] || [];
+            const correctAnswer = questions.find(q => q.id === questionId).a;
+            const normalizedCorrect = normalizeString(correctAnswer);
+
+            // Empty answer
+            if (normalized.length < 2) {
+                return { result: 'wrong', matchedKeys: 0, totalKeys: keys.length };
+            }
+
+            // Exact match (with normalization)
+            if (normalized === normalizedCorrect) {
+                return { result: 'correct', matchedKeys: keys.length, totalKeys: keys.length };
+            }
+
+            // Check how many key concepts are matched
+            let matchedKeys = 0;
+            const userWords = normalized.split(' ');
+
+            for (const key of keys) {
+                const keyNorm = normalizeString(key);
+
+                // Direct inclusion
+                if (normalized.includes(keyNorm)) {
+                    matchedKeys++;
+                    continue;
+                }
+
+                // Fuzzy match for each word
+                for (const word of userWords) {
+                    if (word.length >= 3) {
+                        const distance = levenshteinDistance(word, keyNorm);
+                        const maxLen = Math.max(word.length, keyNorm.length);
+                        // Allow ~25% error rate
+                        if (distance <= Math.ceil(maxLen * 0.25)) {
+                            matchedKeys++;
+                            break;
+                        }
+
+                        // Check if key is part of word or vice versa
+                        if (word.includes(keyNorm) || keyNorm.includes(word)) {
+                            matchedKeys++;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Determine result based on matched keys
+            const matchRatio = keys.length > 0 ? matchedKeys / keys.length : 0;
+
+            if (matchRatio >= 0.6) {
+                return { result: 'correct', matchedKeys, totalKeys: keys.length };
+            } else if (matchRatio >= 0.3) {
+                return { result: 'partial', matchedKeys, totalKeys: keys.length };
+            } else {
+                return { result: 'wrong', matchedKeys, totalKeys: keys.length };
+            }
+        }
+
+        // Show write question
+        function showWriteQuestion() {
+            if (gameState.currentQuestionIndex >= gameState.totalQuestions) {
+                endGame();
+                return;
+            }
+
+            const q = gameState.gameQuestions[gameState.currentQuestionIndex];
+            document.getElementById('writeCategory').textContent = q.category;
+            document.getElementById('writeQuestion').textContent = q.q;
+            document.getElementById('writeNumber').textContent =
+                `Fråga ${gameState.currentQuestionIndex + 1} av ${gameState.totalQuestions}`;
+            document.getElementById('writeScore').textContent = gameState.currentScore;
+            document.getElementById('writeStreakCount').textContent = gameState.streak;
+
+            // Reset input and feedback
+            const input = document.getElementById('writeInput');
+            input.value = '';
+            input.disabled = false;
+            input.focus();
+
+            document.getElementById('writeSubmitBtn').disabled = false;
+            document.getElementById('writeSubmitBtn').style.display = 'block';
+            document.getElementById('writeNextBtn').style.display = 'none';
+            document.getElementById('writeFeedback').className = 'write-feedback';
+            document.getElementById('hintToggle').style.display = 'inline-block';
+            document.getElementById('writeHint').style.display = 'none';
+
+            // Generate hint (first letters of key words)
+            const keys = keyAnswers[q.id] || [];
+            if (keys.length > 0) {
+                const hints = keys.slice(0, 3).map(k => k.charAt(0).toUpperCase() + '...');
+                document.getElementById('writeHint').textContent = `Nyckelord börjar på: ${hints.join(', ')}`;
+            }
+
+            const streakIndicator = document.getElementById('writeStreakIndicator');
+            if (gameState.streak >= 5) {
+                streakIndicator.classList.add('hot');
+            } else {
+                streakIndicator.classList.remove('hot');
+            }
+        }
+
+        // Toggle hint
+        function toggleHint() {
+            const hint = document.getElementById('writeHint');
+            hint.style.display = hint.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Submit write answer
+        function submitWriteAnswer() {
+            const input = document.getElementById('writeInput');
+            const userAnswer = input.value.trim();
+            const q = gameState.gameQuestions[gameState.currentQuestionIndex];
+
+            if (!userAnswer) {
+                input.focus();
+                return;
+            }
+
+            input.disabled = true;
+            document.getElementById('writeSubmitBtn').disabled = true;
+            document.getElementById('hintToggle').style.display = 'none';
+
+            const result = checkWriteAnswer(userAnswer, q.id);
+            const feedback = document.getElementById('writeFeedback');
+            const feedbackText = document.getElementById('feedbackText');
+            const reveal = document.getElementById('correctAnswerReveal');
+
+            if (result.result === 'correct') {
+                feedback.className = 'write-feedback correct';
+                feedbackText.innerHTML = '✅ <strong>Rätt!</strong> Bra jobbat!';
+                reveal.textContent = '';
+
+                gameState.correctAnswers++;
+                gameState.streak++;
+                gameState.totalCorrect++;
+
+                let points = 150; // More points for writing
+                if (gameState.streak >= 3) points += 50;
+                if (gameState.streak >= 5) points += 50;
+                gameState.currentScore += points;
+
+                if (!gameState.masteredQuestions[q.id]) {
+                    gameState.masteredQuestions[q.id] = 0;
+                }
+                gameState.masteredQuestions[q.id] += 2; // Extra mastery for writing
+
+                if (gameState.streak > gameState.bestStreak) {
+                    gameState.bestStreak = gameState.streak;
+                }
+                if (gameState.streak > gameState.bestStreakEver) {
+                    gameState.bestStreakEver = gameState.streak;
+                }
+
+                if (gameState.streak === 3) showCombo('3x Combo! 🔥');
+                if (gameState.streak === 5) showCombo('5x SUPER! 💥');
+
+            } else if (result.result === 'partial') {
+                feedback.className = 'write-feedback partial';
+                feedbackText.innerHTML = `⚠️ <strong>Nästan!</strong> Du fick med ${result.matchedKeys} av ${result.totalKeys} nyckelbegrepp.`;
+                reveal.innerHTML = `<strong>Komplett svar:</strong> ${q.a}`;
+
+                gameState.currentScore += 50; // Partial points
+                gameState.streak = 0;
+
+            } else {
+                feedback.className = 'write-feedback wrong';
+                feedbackText.innerHTML = '❌ <strong>Fel.</strong> Försök komma ihåg till nästa gång!';
+                reveal.innerHTML = `<strong>Rätt svar:</strong> ${q.a}`;
+
+                gameState.streak = 0;
+
+                if (gameState.masteredQuestions[q.id]) {
+                    gameState.masteredQuestions[q.id] = Math.max(0, gameState.masteredQuestions[q.id] - 1);
+                }
+            }
+
+            document.getElementById('writeScore').textContent = gameState.currentScore;
+            document.getElementById('writeStreakCount').textContent = gameState.streak;
+            document.getElementById('writeSubmitBtn').style.display = 'none';
+            document.getElementById('writeNextBtn').style.display = 'block';
+        }
+
+        // Next write question
+        function nextWriteQuestion() {
+            gameState.currentQuestionIndex++;
+            showWriteQuestion();
+        }
+
+        // Handle Enter key in write mode
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && gameState.gameMode === 'write') {
+                const submitBtn = document.getElementById('writeSubmitBtn');
+                const nextBtn = document.getElementById('writeNextBtn');
+
+                if (submitBtn.style.display !== 'none' && !submitBtn.disabled) {
+                    submitWriteAnswer();
+                } else if (nextBtn.style.display !== 'none') {
+                    nextWriteQuestion();
+                }
+            }
+        });
+
         // End game
         function endGame(special = null) {
             if (gameState.timerInterval) clearInterval(gameState.timerInterval);
@@ -1513,6 +1959,9 @@
             }
             if (gameState.gameMode === 'speed' && gameState.correctAnswers === 10) {
                 unlockAchievement('speed_demon');
+            }
+            if (gameState.gameMode === 'write' && gameState.correctAnswers === 10) {
+                unlockAchievement('writer');
             }
 
             gameState.totalXp += xpEarned;
